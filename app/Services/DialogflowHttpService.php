@@ -5,34 +5,34 @@ namespace App\Services;
 use GuzzleHttp\Client;
 use Firebase\JWT\JWT;
 
-class DialogflowService
+class DialogflowHttpService
 {
     protected $client;
     protected $projectId;
-    protected $accessToken;
+    protected $token;
 
     public function __construct()
     {
         $this->projectId = env('DIALOGFLOW_PROJECT_ID');
         $keyFile = storage_path('app/dialogflow-key.json');
-        $this->accessToken = $this->generateAccessToken($keyFile);
+        $this->token = $this->getAccessToken($keyFile);
 
         $this->client = new Client([
             'base_uri' => 'https://dialogflow.googleapis.com/v2/projects/',
         ]);
     }
 
-    private function generateAccessToken($keyFile)
+    private function getAccessToken($keyFile)
     {
         $json = json_decode(file_get_contents($keyFile), true);
-        $now = time();
+        $now  = time();
 
         $payload = [
-            'iss' => $json['client_email'],
+            'iss'   => $json['client_email'],
             'scope' => 'https://www.googleapis.com/auth/dialogflow',
-            'aud' => $json['token_uri'],
-            'iat' => $now,
-            'exp' => $now + 3600,
+            'aud'   => $json['token_uri'],
+            'iat'   => $now,
+            'exp'   => $now + 3600,
         ];
 
         $jwt = JWT::encode($payload, $json['private_key'], 'RS256');
@@ -55,13 +55,13 @@ class DialogflowService
 
         $response = $this->client->post($url, [
             'headers' => [
-                'Authorization' => "Bearer {$this->accessToken}",
-                'Content-Type' => 'application/json',
+                'Authorization' => "Bearer {$this->token}",
+                'Content-Type'  => 'application/json',
             ],
             'json' => [
                 'query_input' => [
                     'text' => [
-                        'text' => $text,
+                        'text'          => $text,
                         'language_code' => $languageCode,
                     ],
                 ],
@@ -69,10 +69,6 @@ class DialogflowService
         ]);
 
         $data = json_decode($response->getBody(), true);
-
-        return (object) [
-            'fulfillmentText' => $data['queryResult']['fulfillmentText'] ?? null,
-            'intentDisplayName' => $data['queryResult']['intent']['displayName'] ?? null,
-        ];
+        return $data['queryResult']['fulfillmentText'] ?? 'No reply';
     }
 }

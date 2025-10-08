@@ -25,12 +25,13 @@ Route::get('/', fn() => redirect()->route('login.form'));
 Route::get('/signup', [RegisterController::class, 'show'])->name('register.form');
 Route::post('/signup', [RegisterController::class, 'store'])->name('register.store');
 
-// Chatbot (require auth to ensure user_id exists)
+// Chatbot (requires auth)
 Route::middleware('auth')->group(function () {
     Route::get('/chatbot', [ChatbotController::class, 'index'])->name('chatbot');
-    Route::post('/chatbot/send', [ChatbotController::class, 'send'])->name('chat.send');
+    Route::post('/chatbot/send', [ChatbotController::class, 'send'])->name('chatbot.send');
+    
+    Route::get('/chatbot/{id}', [ChatbotController::class, 'showConversation'])->name('chatbot.show');
 });
-Route::get('/chatbot/{id}', [ChatBotController::class, 'showConversation'])->name('chatbot.show');
 
 
 

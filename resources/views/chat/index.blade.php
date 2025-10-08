@@ -5,10 +5,12 @@
 @section('content')
 <div class="products-section" style="display:flex;justify-content:center;align-items:flex-start;margin-top:40px;margin-bottom:40px;">
     <div class="card shadow" style="background:#fff;border-radius:15px;width:100%;max-width:600px;display:flex;flex-direction:column;overflow:hidden;">
+        <meta name="csrf-token" content="{{ csrf_token() }}">
         
+
         {{-- Chat Header --}}
         <div class="card-header" style="padding:16px;background:#e6b6d6;font-weight:700;font-size:1.2rem;">
-            🤖 Chatbot
+            🤖 PawTulong Chatbot
         </div>
 
         {{-- Chat Body --}}
@@ -54,7 +56,7 @@ const form = document.getElementById('chat-form');
 const input = document.getElementById('chat-input');
 const chatBox = document.getElementById('chat-box');
 
-// Scroll to bottom on load
+// Auto scroll down
 chatBox.scrollTop = chatBox.scrollHeight;
 
 form.addEventListener('submit', async (e) => {
@@ -62,7 +64,7 @@ form.addEventListener('submit', async (e) => {
     const msg = input.value.trim();
     if(!msg) return;
 
-    // Append user message bubble
+    // Show user message instantly
     chatBox.innerHTML += `
         <div style="display:flex;justify-content:flex-end;margin-bottom:8px;">
             <div style="background:#d1e7dd;padding:10px 14px;border-radius:12px;max-width:70%;">
@@ -74,18 +76,18 @@ form.addEventListener('submit', async (e) => {
     chatBox.scrollTo({ top: chatBox.scrollHeight, behavior: 'smooth' });
 
     try {
-        const res = await fetch("{{ route('chat.send') }}", {
+        const res = await fetch("{{ route('chatbot.send') }}", {
             method: 'POST',
             headers: {
                 'Content-Type':'application/json',
                 'X-CSRF-TOKEN':'{{ csrf_token() }}'
             },
-            body: JSON.stringify({message: msg})
+            body: JSON.stringify({ message: msg })
         });
 
         const data = await res.json();
 
-        // Append bot reply bubble
+        // Show bot response
         chatBox.innerHTML += `
             <div style="display:flex;justify-content:flex-start;margin-bottom:12px;">
                 <div style="background:#f8d7da;padding:10px 14px;border-radius:12px;max-width:70%;">
@@ -96,7 +98,9 @@ form.addEventListener('submit', async (e) => {
         chatBox.scrollTo({ top: chatBox.scrollHeight, behavior: 'smooth' });
 
     } catch (err) {
-        chatBox.innerHTML += `<div style="color:red;">⚠️ Error sending message</div>`;
+        chatBox.innerHTML += `
+            <div style="color:red;text-align:center;margin-top:10px;">⚠️ Error sending message</div>
+        `;
     }
 });
 </script>

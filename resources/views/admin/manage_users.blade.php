@@ -38,7 +38,8 @@
                         <button type="button" class="button edit open-modal"
                             data-id="{{ $user->id }}"
                             data-username="{{ $user->username }}"
-                            data-email="{{ $user->email }}">
+                            data-email="{{ $user->email }}"
+                            data-type="{{ $user->user_type }}">
                             <i class="fas fa-pen"></i>
                         </button>
 
@@ -78,6 +79,14 @@
             </div>
 
             <div class="form-group">
+                <label for="edit-type">User Type:</label>
+                <select name="user_type" id="edit-type" required>
+                    <option value="client">Client</option> 
+                    <option value="admin">Admin</option>
+                </select>
+            </div>
+
+            <div class="form-group">
                 <label for="edit-password">New Password (leave blank to keep current):</label>
                 <input type="password" id="edit-password" name="password" placeholder="Enter new password">
             </div>
@@ -93,6 +102,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     const modal = document.getElementById('editModal');
     const openButtons = document.querySelectorAll('.open-modal');
+    const closeModalBtn = document.getElementById('closeModal');
     const closeX = document.getElementById('closeX');
     const editForm = document.getElementById('editForm');
     const baseUpdateUrl = @json(url('admin/manage-users'));
@@ -103,6 +113,7 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('edit-id').value = id;
             document.getElementById('edit-username').value = btn.dataset.username;
             document.getElementById('edit-email').value = btn.dataset.email;
+            document.getElementById('edit-type').value = btn.dataset.type;
             editForm.action = `${baseUpdateUrl}/${id}`;
             modal.style.display = 'flex';
         });
@@ -110,6 +121,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function hideModal() { modal.style.display = 'none'; }
 
+    if (closeModalBtn) closeModalBtn.addEventListener('click', hideModal);
     closeX.addEventListener('click', hideModal);
 
     window.addEventListener('click', function(event) {

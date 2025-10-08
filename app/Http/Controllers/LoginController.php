@@ -9,27 +9,36 @@ class LoginController extends Controller
 {
     public function show()
     {
-        return view('auth.login'); 
+        return view('auth.login'); // your login view
     }
 
     public function login(Request $request)
-{
-    $credentials = $request->validate([
-        'email'    => ['required','email'],
-        'password' => ['required','string'],
-    ]);
+    {
+        $credentials = $request->validate([
+            'email'    => ['required','email'],
+            'password' => ['required','string'],
+        ]);
 
-    if (Auth::attempt($credentials, $request->filled('remember'))) {
-        $request->session()->regenerate();
+        if (Auth::attempt($credentials, $request->filled('remember'))) {
+            $request->session()->regenerate();
 
-        // Redirect everyone to landing page
-        return redirect()->route('landing');
+            // Redirect based on user_type
+            if (Auth::user()->user_type === 'admin') {
+                return redirect()->route('admin.dashboard');
+            } elseif (Auth::user()->user_type === 'client') {
+                return redirect()->route('client.dashboard');
+            } else {
+                Auth::logout();
+                return redirect()->route('login.form')
+                                 ->withErrors('Invalid user type.');
+            }
+        }
+
+        return back()->withErrors([
+            'email' => 'The provided credentials do not match our records.',
+        ])->withInput();
     }
 
-    return back()->withErrors([
-        'email' => 'The provided credentials do not match our records.',
-    ])->withInput();
-}
     public function logout(Request $request)
     {
         Auth::logout();
