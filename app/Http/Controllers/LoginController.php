@@ -21,16 +21,14 @@ class LoginController extends Controller
 
         if (Auth::attempt($credentials, $request->filled('remember'))) {
             $request->session()->regenerate();
-
-            // Redirect based on user_type
-            if (Auth::user()->user_type === 'admin') {
-                return redirect()->route('admin.dashboard');
-            } elseif (Auth::user()->user_type === 'client') {
-                return redirect()->route('client.dashboard');
+            $user = Auth::user();
+            if ($user->user_type === 'admin') {
+                return redirect('/admin');
+            } elseif ($user->user_type === 'client') {
+                return redirect('/client');
             } else {
                 Auth::logout();
-                return redirect()->route('login.form')
-                                 ->withErrors('Invalid user type.');
+                return redirect()->route('login.form')->withErrors('Invalid user type.');
             }
         }
 

@@ -18,8 +18,15 @@ use App\Http\Controllers\ChatbotController;
 |--------------------------------------------------------------------------
 */
 
-// Redirect root to login
-Route::get('/', fn() => redirect()->route('login.form'));
+
+// Show public landing page at root
+Route::get('/', function () {
+    return view('landing_public');
+});
+
+
+// Public landing
+Route::get('/landing', [LandingController::class, 'index'])->name('landing');
 
 // Client signup & login
 Route::get('/signup', [RegisterController::class, 'show'])->name('register.form');
@@ -29,9 +36,11 @@ Route::post('/signup', [RegisterController::class, 'store'])->name('register.sto
 Route::middleware('auth')->group(function () {
     Route::get('/chatbot', [ChatbotController::class, 'index'])->name('chatbot');
     Route::post('/chatbot/send', [ChatbotController::class, 'send'])->name('chatbot.send');
-    
     Route::get('/chatbot/{id}', [ChatbotController::class, 'showConversation'])->name('chatbot.show');
+    Route::post('/chatbot/new', [ChatbotController::class, 'newSession'])->name('chatbot.new');
+    Route::delete('/chatbot/{id}', [ChatbotController::class, 'deleteSession'])->name('chatbot.delete');
 });
+
 
 
 
@@ -54,9 +63,8 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 |--------------------------------------------------------------------------
 */
 
-// Landing page & products (any authenticated user)
+// Products (any authenticated user)
 Route::middleware('auth')->group(function () {
-    Route::get('/landing', [LandingController::class, 'index'])->name('landing');
     Route::get('/products', [ProductController::class, 'index'])->name('products.index');
 });
 
@@ -84,11 +92,13 @@ Route::middleware(['auth', \App\Http\Middleware\AdminMiddleware::class])
             Route::get('/', [AdminUserController::class, 'index'])->name('users.index');
             Route::put('/{user}', [AdminUserController::class, 'update'])->name('users.update');
             Route::delete('/{user}', [AdminUserController::class, 'destroy'])->name('users.destroy');
+
         });
 
         // Admin export
         Route::get('/export', [AdminController::class, 'export'])->name('admin.export');
     });
+Route::post('/admin/change-password', [AdminController::class, 'changePassword'])->name('admin.changePassword');
 
 /*
 |--------------------------------------------------------------------------
@@ -98,6 +108,9 @@ Route::middleware(['auth', \App\Http\Middleware\AdminMiddleware::class])
 Route::middleware(['auth', \App\Http\Middleware\ClientMiddleware::class])
     ->prefix('client')
     ->group(function () {
+        // Landing page
+        Route::get('/landing', [ClientController::class, 'landing'])->name('client.landing');
+
         // Dashboard
         Route::get('/', [ClientController::class, 'index'])->name('client.dashboard');
 
@@ -105,10 +118,6 @@ Route::middleware(['auth', \App\Http\Middleware\ClientMiddleware::class])
         Route::get('/profile/edit', [ClientController::class, 'edit'])->name('client.profile.edit');
         Route::put('/profile', [ClientController::class, 'update'])->name('client.profile.update');
 
-        
-
-
         // Logout
         Route::post('/logout', [ClientController::class, 'logout'])->name('client.logout');
     });
-

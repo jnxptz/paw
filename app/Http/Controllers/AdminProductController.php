@@ -18,19 +18,21 @@ class AdminProductController extends Controller
         $request->validate([
             'name' => 'required|min:2',
             'description' => 'required|min:10',
-            'price' => 'required|numeric|min:0.01',
-            'image' => 'required|string',
+            'image' => 'required|image|mimes:jpg,jpeg,png,gif|max:2048',
             'category' => 'required|string',
-            'stock_quantity' => 'required|integer|min:0',
         ]);
+
+        $imageName = null;
+        if ($request->hasFile('image')) {
+            $imageName = time() . '_' . $request->file('image')->getClientOriginalName();
+            $request->file('image')->move(public_path('img'), $imageName);
+        }
 
         Product::create([
             'name' => $request->name,
             'description' => $request->description,
-            'price' => $request->price,
-            'image_path' => 'img/' . $request->image,
+            'image_path' => 'img/' . $imageName,
             'category' => $request->category,
-            'stock_quantity' => $request->stock_quantity,
             'is_active' => 1,
         ]);
 
@@ -38,27 +40,31 @@ class AdminProductController extends Controller
     }
 
     public function update(Request $request, Product $product)
-    {
-        $request->validate([
-            'name' => 'required|min:2',
-            'description' => 'required|min:10',
-            'price' => 'required|numeric|min:0.01',
-            'image' => 'required|string',
-            'category' => 'required|string',
-            'stock_quantity' => 'required|integer|min:0',
-        ]);
+{
+    $request->validate([
+        'name' => 'required|min:2',
+        'description' => 'required|min:10',
+        'image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:2048',
+        'category' => 'required|string',
+    ]);
 
-        $product->update([
-            'name' => $request->name,
-            'description' => $request->description,
-            'price' => $request->price,
-            'image_path' => 'img/' . $request->image,
-            'category' => $request->category,
-            'stock_quantity' => $request->stock_quantity,
-        ]);
+    $data = [
+        'name' => $request->name,
+        'description' => $request->description,
+        'category' => $request->category,
+    ];
 
-        return redirect()->route('admin.products')->with('success', 'Product updated successfully!');
+    if ($request->hasFile('image')) {
+        $imageName = time() . '_' . $request->file('image')->getClientOriginalName();
+        $request->file('image')->move(public_path('img'), $imageName);
+        $data['image_path'] = 'img/' . $imageName;
     }
+
+    $product->update($data);
+
+    return redirect()->route('admin.products')->with('success', 'Product updated successfully!');
+}
+
 
     public function destroy(Product $product)
     {

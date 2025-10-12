@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\User; // Added import
+use App\Models\ChatSession; // Added for clarity
 
 class ChatLog extends Model
 {
@@ -16,6 +18,10 @@ class ChatLog extends Model
         'answer',
         'category',
         'response_time',
+    ];
+
+    protected $casts = [
+        'response_time' => 'float',
     ];
 
     public function user()

@@ -13,6 +13,7 @@
     <div class="header">
         <img src="{{ asset('img/logo (1).png') }}" class="logo" alt="Logo">
         <span class="brand">PawTulong</span>
+        @auth
         <nav>
             <ul class="nav-links">
                 <li><a href="{{ route('landing') }}" class="{{ ($page ?? '') === 'home' ? 'active' : '' }}">Home</a></li>
@@ -20,7 +21,7 @@
                 <li><a href="{{ route('products.index') }}" class="{{ ($page ?? '') === 'products' ? 'active' : '' }}">Products</a></li>
             </ul>
         </nav>
-
+        @endauth
         <div class="dropdown">
             <button class="dropdown-toggle" id="dropdownBtn"><i class="fas fa-bars"></i></button>
             <div class="dropdown-menu" id="dropdownMenu">

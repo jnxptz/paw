@@ -57,7 +57,7 @@ html, body {
 }
 
 .login-box {
-  background: #4a4747;
+  background: #f1d5e9;
   border-radius: 28px;
   box-shadow: 8px 10px 10px #b3a3b3;
   padding: 38px 38px 28px 38px;
@@ -67,17 +67,17 @@ html, body {
 }
 
 .login-box h1 {
-  color: #fff;
+  color: #d881bb;
   font-size: 2.2rem;
   font-weight: 700;
   margin-bottom: 28px;
   font-family: 'Poppins', Arial, sans-serif;
-  text-shadow: 2px 2px 0 #231f20;
+  
 }
 
 .login-box label {
   display: block;
-  color: #fff;
+  color: #d881bb;
   font-size: 0.95rem;
   text-align: left;
   margin-bottom: 4px;
@@ -93,7 +93,7 @@ html, body {
   margin-bottom: 10px;
   border: none;
   border-radius: 7px;
-  background: #e6e6e6;
+  background: #ffffff;
   font-size: 1rem;
   font-family: 'Poppins', Arial, sans-serif;
   outline: none;
@@ -120,13 +120,13 @@ html, body {
 }
 
 .signup-link {
-  color: #fff;
+  color: #231f20;
   font-size: 0.95rem;
   margin-top: 10px;
 }
 
 .signup-link a {
-  color: #e6b6d6;
+  color: #d881bb;
   text-decoration: underline;
   font-weight: 700;
   margin-left: 4px;
@@ -135,7 +135,7 @@ html, body {
 footer {
   background: #e6b6d6;
   padding: 18px 0 10px 0;
-  position: fixed;
+  position: relative;
   left: 0;
   bottom: 0;
   width: 100vw;

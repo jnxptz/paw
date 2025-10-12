@@ -46,4 +46,6 @@ class AdminUserController extends Controller
 
         return redirect()->route('users.index')->with('success', 'User updated successfully');
     }
+
+    
 }
