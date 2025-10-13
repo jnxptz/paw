@@ -2,10 +2,17 @@
 
 @section('title', 'PawTulong | Home')
 
-@php 
+@php
 use Illuminate\Support\Str;
-$layoutCss = 'landing.css'; 
-$page = 'home'; 
+
+/** @var \Illuminate\Support\Collection|\App\Models\User[] $topUsers */
+/** @var \Illuminate\Support\Collection|\stdClass[] $mostAsked */
+/** @var int $totalUsers */
+/** @var int $totalChats */
+/** @var array $trendData */
+
+$layoutCss = 'landing.css';
+$page = 'home';
 @endphp
 
 @section('content')
@@ -26,11 +33,11 @@ $page = 'home';
 <div style="display:flex;justify-content:center;flex-wrap:wrap;gap:20px;margin-bottom:30px;">
   <div style="background:#fff;border:1px solid #eee;border-radius:10px;padding:16px 20px;min-width:160px;text-align:center;">
     <div style="font-size:0.9rem;color:#777;">Users</div>
-    <div style="font-size:1.4rem;font-weight:700;color:#6b4a6b;">{{ $totalUsers ?? 0 }}</div>
+    <div style="font-size:1.4rem;font-weight:700;color:#6b4a6b;">{{ $totalUsers }}</div>
   </div>
   <div style="background:#fff;border:1px solid #eee;border-radius:10px;padding:16px 20px;min-width:160px;text-align:center;">
     <div style="font-size:0.9rem;color:#777;">Chats</div>
-    <div style="font-size:1.4rem;font-weight:700;color:#6b4a6b;">{{ $totalChats ?? 0 }}</div>
+    <div style="font-size:1.4rem;font-weight:700;color:#6b4a6b;">{{ $totalChats }}</div>
   </div>
 </div>
 
@@ -48,7 +55,7 @@ $page = 'home';
   <div style="background:#fff;border:1px solid #eee;border-radius:12px;width:360px;padding:16px;">
     <h3 style="margin:0 0 10px;color:#6b4a6b;text-align:center;">🏆 Top Users</h3>
     <ul style="list-style:none;padding:0;margin:0;">
-      @forelse($topUsers ?? [] as $i => $u)
+      @forelse($topUsers as $i => $u)
         <li style="padding:8px;margin-bottom:6px;border:1px solid #eee;border-radius:8px;background:#f9f9f9;">
           <strong>#{{ $i+1 }}</strong> — {{ $u->user->username ?? $u->user->email ?? 'Unknown' }}
           <span style="float:right;color:#6b4a6b;font-weight:600;">{{ $u->conversations_count ?? 0 }}</span>
@@ -70,7 +77,7 @@ $page = 'home';
           </tr>
         </thead>
         <tbody>
-          @forelse($trendData ?? [] as $r)
+          @forelse($trendData as $r)
             <tr style="border-bottom:1px solid #eee;text-align:center;">
               <td>{{ $r['date'] ?? '—' }}</td>
               <td>{{ $r['count'] ?? 0 }}</td>
@@ -88,7 +95,7 @@ $page = 'home';
   <div style="background:#fff;border:1px solid #eee;border-radius:12px;width:650px;padding:16px;">
     <h3 style="margin:0 0 10px;color:#6b4a6b;text-align:center;">💬 Most Asked Questions</h3>
     <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;">
-      @forelse($mostAsked ?? [] as $i => $q)
+      @forelse($mostAsked as $i => $q)
         <div 
           style="padding:10px;border:1px solid #eee;border-radius:8px;background:#f9f9f9;font-size:0.9rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:default;"
           title="{{ $q->question ?? 'Unknown' }}">
