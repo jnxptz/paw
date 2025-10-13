@@ -68,27 +68,17 @@ class LandingController extends Controller
                 'trendSeries' => $trendSeries
             ]);
         } else {
-            // Client dashboard data
+            // Client landing view (hero + client cards)
             $recentConversations = ChatLog::where('user_id', $user->id)
-                ->orderBy('created_at', 'desc')
-                ->take(10)
+                ->latest()
+                ->take(5)
                 ->get();
-            // Most asked questions for all users (just the question text)
+            // Show ALL users' questions globally (distinct, ordered by frequency)
             $mostAsked = ChatLog::select('question', DB::raw('COUNT(*) as count'))
                 ->groupBy('question')
                 ->orderByDesc('count')
-                ->limit(20)
                 ->pluck('question');
-            return view('landing', [
-                'page' => 'home',
-                'recentConversations' => $recentConversations,
-                'trendLabels' => $trendLabels,
-                'trendSeries' => $trendSeries,
-                'totalQuestions' => null,
-                'totalUsers' => null,
-                'mostAsked' => $mostAsked,
-                'topUsers' => collect()
-            ]);
+            return view('client.landing', compact('user', 'recentConversations', 'mostAsked'));
         }
     }
 }

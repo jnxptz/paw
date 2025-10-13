@@ -14,6 +14,8 @@ html, body {
   width: 100vw;
   margin: 0;
   padding: 0;
+  display: flex;           /* enables sticky footer behavior */
+  flex-direction: column;
 }
 
 .header {
@@ -148,13 +150,14 @@ html, body {
 .logout-btn:hover { background: #f8f9fa; }
 
 .container {
-  min-height: 80vh;
+  flex: 1;                 /* fills remaining height */
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
   z-index: 1;
   margin-top: 40px;
+  padding-bottom: 100px;   /* clears footer height */
 }
 
 .profile-box {
@@ -266,15 +269,14 @@ html, body {
 footer {
   background: #e6b6d6;
   padding: 18px 0 10px 0;
-  position: relative; /* changed from fixed */
+  position: relative;      /* not fixed */
   width: 100%;
   border-radius: 30px 30px 0 0;
   box-shadow: 0 -4px 0 #a97c9b;
   box-sizing: border-box;
   z-index: 10;
-  margin-top: 40px; /* adds breathing room */
+  margin-top: auto;        /* pushes footer to bottom */
 }
-
 
 .footer-content {
   display: flex;

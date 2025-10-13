@@ -92,12 +92,16 @@ Route::middleware(['auth', \App\Http\Middleware\AdminMiddleware::class])
             Route::get('/', [AdminUserController::class, 'index'])->name('users.index');
             Route::put('/{user}', [AdminUserController::class, 'update'])->name('users.update');
             Route::delete('/{user}', [AdminUserController::class, 'destroy'])->name('users.destroy');
-
         });
+
+        // Admin Profile
+        Route::get('/profile', [AdminController::class, 'profile'])->name('admin.profile');
+        Route::put('/profile', [AdminController::class, 'updateProfile'])->name('admin.updateProfile');
 
         // Admin export
         Route::get('/export', [AdminController::class, 'export'])->name('admin.export');
     });
+
 Route::post('/admin/change-password', [AdminController::class, 'changePassword'])->name('admin.changePassword');
 
 /*
@@ -108,16 +112,17 @@ Route::post('/admin/change-password', [AdminController::class, 'changePassword']
 Route::middleware(['auth', \App\Http\Middleware\ClientMiddleware::class])
     ->prefix('client')
     ->group(function () {
-        // Landing page
         Route::get('/landing', [ClientController::class, 'landing'])->name('client.landing');
-
-        // Dashboard
         Route::get('/', [ClientController::class, 'index'])->name('client.dashboard');
 
-        // Edit profile
+        Route::get('/profile', [ClientController::class, 'show'])->name('client.profile');
         Route::get('/profile/edit', [ClientController::class, 'edit'])->name('client.profile.edit');
         Route::put('/profile', [ClientController::class, 'update'])->name('client.profile.update');
 
-        // Logout
+        Route::post('/change-password', [ClientController::class, 'changePassword'])->name('client.changePassword');
         Route::post('/logout', [ClientController::class, 'logout'])->name('client.logout');
+
+        Route::put('/client/profile/update', [ClientController::class, 'updateProfile'])
+    ->name('client.updateProfile');
+
     });

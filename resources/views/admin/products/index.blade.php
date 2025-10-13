@@ -9,7 +9,9 @@
 @endphp
 
 @section('content')
-<h1 class="page-title">Product Management</h1>
+<h1 class="page-title" style="text-align:center; font-weight:700; margin-bottom:30px;">
+    Product Management
+</h1>
 
 @if(session('success'))
     <div class="message success">
@@ -22,68 +24,30 @@
     </div>
 @endif
 
-{{-- Add Product Form --}}
-<div class="add-product-section">
-    <h2><i class="fas fa-plus-circle"></i> Add New Product</h2>
-    <form class="add-product-form" 
-          action="{{ route('admin.products.store') }}" 
-          method="POST" 
-          enctype="multipart/form-data">
-        @csrf
-
-        <div class="form-group">
-            <label for="name">Product Name:</label>
-            <input type="text" id="name" name="name" required>
-        </div>
-
-        <div class="form-group">
-            <label for="description">Description:</label>
-            <textarea id="description" name="description" required></textarea>
-        </div>
-
-        <div class="form-group">
-            <label for="category">Category:</label>
-            <select id="category" name="category" required>
-                <option value="">Select Category</option>
-                <option value="Food">Food</option>
-                <option value="Toys">Toys</option>
-                <option value="Enclosures">Enclosures</option>
-                <option value="Grooming">Grooming</option>
-                <option value="Health">Health</option>
-                <option value="Accessories">Accessories</option>
-            </select>
-        </div>
-
-        <div class="form-group">
-            <label for="image" class="form-label" 
-                   style="font-weight:600;display:block;margin-bottom:6px;color:#4a3b4a;">
-                Product Image
-            </label>
-
-            <div id="drop-zone"
-                 style="border:2px dashed #a86ca8;
-                        border-radius:10px;
-                        padding:20px;
-                        text-align:center;
-                        background:#fdf9fd;
-                        transition:0.3s;
-                        cursor:pointer;">
-                <p style="margin:0;color:#6b4a6b;font-weight:500;">
-                    📸 Drag & drop image here or click to browse
-                </p>
-                <input type="file" id="image" name="image" accept="image/*" style="display:none;" required>
-                <img id="preview" src="#" alt="Preview"
-                     style="max-width:120px; margin-top:10px; border-radius:10px; display:none;">
-            </div>
-        </div>
-
-        <button type="submit" class="add-btn"><i class="fas fa-plus"></i> Add Product</button>
-    </form>
+{{-- Section Header --}}
+<div style="
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    padding-left: 40px;   /* keep small space for the title */
+    padding-right: 0;     /* push button all the way right */
+">
+    <h2 style="font-weight: 600; margin: 0; display: flex; align-items: center; gap: 6px;">
+        <i class="fas fa-list"></i> Current Products
+    </h2>
+    <button id="openAddModal" class="add-btn"
+        style="padding:8px 14px; font-size:14px; border-radius:6px; font-weight:600; display:flex; align-items:center; gap:6px; margin-right:85px;">
+        <i class="fas fa-plus-circle"></i> Add New Product
+    </button>
+</div>
 </div>
 
-{{-- Products Table --}}
+
+
+{{-- 📦 Products Table --}}
 <div class="products-section">
-    <h2><i class="fas fa-list"></i> Current Products</h2>
     <div class="products-table">
         <table>
             <thead>
@@ -125,8 +89,54 @@
     </div>
 </div>
 
-{{-- Edit Modal --}}
-{{-- Edit Modal --}}
+
+{{-- 🟣 Add Product Modal --}}
+<div id="addProductModal" class="modal" style="display:none;">
+    <div class="modal-content" style="max-width:500px;">
+        <span class="close">&times;</span>
+        <h2><i class="fas fa-plus-circle"></i> Add Product</h2>
+        <form id="addProductForm" action="{{ route('admin.products.store') }}" method="POST" enctype="multipart/form-data">
+            @csrf
+
+            <div class="form-group">
+                <label>Product Name:</label>
+                <input type="text" name="name" required>
+            </div>
+
+            <div class="form-group">
+                <label>Description:</label>
+                <textarea name="description" required></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Category:</label>
+                <select name="category" required>
+                    <option value="">Select Category</option>
+                    <option value="Food">Food</option>
+                    <option value="Toys">Toys</option>
+                    <option value="Enclosures">Enclosures</option>
+                    <option value="Grooming">Grooming</option>
+                    <option value="Health">Health</option>
+                    <option value="Accessories">Accessories</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Product Image</label>
+                <div id="add-drop-zone"
+                     style="border:2px dashed #a86ca8;border-radius:10px;padding:20px;text-align:center;background:#fdf9fd;cursor:pointer;">
+                    <p style="margin:0;color:#6b4a6b;">📸 Drag & drop image here or click to browse</p>
+                    <input type="file" id="add_image" name="image" accept="image/*" style="display:none;" required>
+                    <img id="add_preview" src="#" alt="Preview" style="max-width:120px;margin-top:10px;border-radius:10px;display:none;">
+                </div>
+            </div>
+
+            <button type="submit" class="add-btn" style="width:100%;">Save Product</button>
+        </form>
+    </div>
+</div>
+
+{{-- ✏️ Edit Modal --}}
 <div id="editModal" class="modal">
     <div class="modal-content">
         <span class="close">&times;</span>
@@ -146,25 +156,12 @@
             </div>
 
             <div class="form-group">
-                <label for="edit_image" class="form-label" 
-                       style="font-weight:600;display:block;margin-bottom:6px;color:#4a3b4a;">
-                    Product Image
-                </label>
-
+                <label>Product Image</label>
                 <div id="edit-drop-zone"
-                     style="border:2px dashed #a86ca8;
-                            border-radius:10px;
-                            padding:20px;
-                            text-align:center;
-                            background:#fdf9fd;
-                            transition:0.3s;
-                            cursor:pointer;">
-                    <p style="margin:0;color:#6b4a6b;font-weight:500;">
-                        📸 Drag & drop image here or click to browse
-                    </p>
+                     style="border:2px dashed #a86ca8;border-radius:10px;padding:20px;text-align:center;background:#fdf9fd;cursor:pointer;">
+                    <p style="margin:0;color:#6b4a6b;">📸 Drag & drop image here or click to browse</p>
                     <input type="file" id="edit_image" name="image" accept="image/*" style="display:none;">
-                    <img id="edit_preview" src="#" alt="Preview"
-                         style="max-width:120px; margin-top:10px; border-radius:10px; display:none;">
+                    <img id="edit_preview" src="#" alt="Preview" style="max-width:120px;margin-top:10px;border-radius:10px;display:none;">
                 </div>
             </div>
 
@@ -189,13 +186,46 @@
     </div>
 </div>
 
-
 <script>
-    // Edit modal drag-drop
+// 🟣 Add Product Modal
+const addModal = document.getElementById('addProductModal');
+const openAddBtn = document.getElementById('openAddModal');
+const closeAddBtn = addModal.querySelector('.close');
+
+openAddBtn.addEventListener('click', () => addModal.style.display = 'flex');
+closeAddBtn.addEventListener('click', () => addModal.style.display = 'none');
+window.addEventListener('click', e => { if (e.target === addModal) addModal.style.display = 'none'; });
+
+// Drag-drop Add modal
+const addDropZone = document.getElementById('add-drop-zone');
+const addFileInput = document.getElementById('add_image');
+const addPreview = document.getElementById('add_preview');
+
+addDropZone.addEventListener('click', () => addFileInput.click());
+addDropZone.addEventListener('dragover', e => { e.preventDefault(); addDropZone.style.background = '#f3e6f6'; });
+addDropZone.addEventListener('dragleave', e => { e.preventDefault(); addDropZone.style.background = '#fdf9fd'; });
+addDropZone.addEventListener('drop', e => {
+    e.preventDefault();
+    addDropZone.style.background = '#fdf9fd';
+    const file = e.dataTransfer.files[0];
+    addFileInput.files = e.dataTransfer.files;
+    previewAddImage(file);
+});
+addFileInput.addEventListener('change', e => { const file = e.target.files[0]; previewAddImage(file); });
+function previewAddImage(file) {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+        addPreview.src = e.target.result;
+        addPreview.style.display = 'block';
+    };
+    reader.readAsDataURL(file);
+}
+
+// 🟣 Edit modal logic remains the same
 const editDropZone = document.getElementById('edit-drop-zone');
 const editFileInput = document.getElementById('edit_image');
 const editPreview = document.getElementById('edit_preview');
-
 editDropZone.addEventListener('click', () => editFileInput.click());
 editDropZone.addEventListener('dragover', e => { e.preventDefault(); editDropZone.style.background = '#f3e6f6'; });
 editDropZone.addEventListener('dragleave', e => { e.preventDefault(); editDropZone.style.background = '#fdf9fd'; });
@@ -207,7 +237,6 @@ editDropZone.addEventListener('drop', e => {
     previewEditImage(file);
 });
 editFileInput.addEventListener('change', e => { const file = e.target.files[0]; previewEditImage(file); });
-
 function previewEditImage(file) {
     if (!file) return;
     const reader = new FileReader();
@@ -218,56 +247,27 @@ function previewEditImage(file) {
     reader.readAsDataURL(file);
 }
 
-// Populate edit modal with existing product data
+// 🟣 Populate Edit Modal
 document.querySelectorAll('.edit-btn').forEach(btn => {
     btn.addEventListener('click', () => {
-        const id = btn.dataset.id;
-        document.getElementById('edit_product_id').value = id;
+        document.getElementById('edit_product_id').value = btn.dataset.id;
         document.getElementById('edit_product_name').value = btn.dataset.name;
         document.getElementById('edit_product_description').value = btn.dataset.description;
         document.getElementById('edit_product_category').value = btn.dataset.category;
-
-        // Show current image
         editPreview.src = '/img/' + btn.dataset.image;
         editPreview.style.display = 'block';
-
-        // Open modal
         document.getElementById('editModal').style.display = 'block';
     });
 });
 
-    // Image preview and drag-drop logic
-    const dropZone = document.getElementById('drop-zone');
-    const fileInput = document.getElementById('image');
-    const preview = document.getElementById('preview');
-
-    dropZone.addEventListener('click', () => fileInput.click());
-    dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.style.background = '#f3e6f6'; });
-    dropZone.addEventListener('dragleave', e => { e.preventDefault(); dropZone.style.background = '#fdf9fd'; });
-    dropZone.addEventListener('drop', e => {
-        e.preventDefault();
-        dropZone.style.background = '#fdf9fd';
-        const file = e.dataTransfer.files[0];
-        fileInput.files = e.dataTransfer.files;
-        previewImage(file);
+// 🟣 Edit form dynamic route
+(function() {
+    const form = document.getElementById('editProductForm');
+    if (!form) return;
+    form.addEventListener('submit', function(e) {
+        const id = document.getElementById('edit_product_id').value;
+        form.action = '{{ url('admin/products') }}/' + encodeURIComponent(id);
     });
-    fileInput.addEventListener('change', e => { const file = e.target.files[0]; previewImage(file); });
-    function previewImage(file) {
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = e => { preview.src = e.target.result; preview.style.display = 'block'; };
-        reader.readAsDataURL(file);
-    }
-
-    // Edit form action dynamic
-    (function() {
-        const form = document.getElementById('editProductForm');
-        if (!form) return;
-
-        form.addEventListener('submit', function(e) {
-            const id = document.getElementById('edit_product_id').value;
-            form.action = '{{ url('admin/products') }}/' + encodeURIComponent(id);
-        });
-    })();
+})();
 </script>
 @endsection

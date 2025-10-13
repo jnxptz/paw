@@ -13,6 +13,17 @@ html {
   color: #231f20;
 }
 
+/* Ensure footer stays at the bottom even when content is short */
+.main-bg {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.container {
+  flex: 1;
+}
+
 a {
   text-decoration: none;
   color: inherit;
@@ -209,6 +220,7 @@ footer {
     box-shadow: 0 -4px 0 #c29ab3;
     box-sizing: border-box;
     z-index: 100;
+    margin-top: auto; /* push to bottom in flex layout */
 }
 
 .footer-content {

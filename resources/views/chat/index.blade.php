@@ -2,6 +2,8 @@
 
 @section('title', 'Chatbot | PawTulong')
 
+
+
 @section('content')
 <div style="display:flex; height:100vh; margin:0; padding:0; background:#fafafa;">
 
@@ -21,11 +23,11 @@
     ">
         {{-- Header --}}
         <div style="
-            background:linear-gradient(135deg,#e6b6d6,#6b4a6b);
-            color:#fff;
+            
+            color:#6b4a6b;
             text-align:center;
             font-weight:700;
-            font-size:1.1rem;
+            font-size:1.3rem;
             padding:18px 0;
             border-radius:8px;
             margin:0 16px 10px 16px;
@@ -61,13 +63,13 @@
                             text-decoration:none;
                             border-radius:8px;
                             border:1px solid #eee;
-                            background: {{ $currentSession && $currentSession->id == $session->id ? '#e6b6d6' : '#fff' }};
-                            color: {{ $currentSession && $currentSession->id == $session->id ? '#fff' : '#333' }};
+                            background: {{ $currentSession && $currentSession->id == $session->id ? '#d1e7dd' : '#fff' }};
+                            color: {{ $currentSession && $currentSession->id == $session->id ? '#333' : '#333' }};
                             font-weight:500;
                             transition:0.2s;
                         "
-                        onmouseover="if(this.style.background!=='rgb(230, 182, 214)') this.style.background='#f7f7f7'"
-                        onmouseout="if(this.style.background!=='rgb(230, 182, 214)') this.style.background='#fff'">
+                        onmouseover="if(this.style.background!=='rgb(209, 231, 221)') this.style.background='#f7f7f7'"
+                        onmouseout="if(this.style.background!=='rgb(209, 231, 221)') this.style.background='#fff'">
                         <div style="font-weight:700; font-size:0.95rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
                             {{ $session->session_name }}
                         </div>
@@ -118,7 +120,7 @@
                 <meta name="csrf-token" content="{{ csrf_token() }}">
 
                 {{-- Header --}}
-                <div style="padding:16px; background:#e6b6d6; font-weight:700; font-size:1.2rem; color:#fff;">
+                <div style="padding:16px; background:#6b4a6b; font-weight:700; font-size:1.2rem; color:#fff;">
                     🤖 PawTulong Chatbot
                     @if(isset($currentSession))
                         <div style="font-size:0.9rem; font-weight:400; margin-top:4px; color:#f5f5f5;">
@@ -128,7 +130,7 @@
                 </div>
 
                 {{-- Chat Messages --}}
-                <div id="chat-box" style="flex:1; overflow-y:auto; padding:16px; min-height:300px; max-height:400px; background:#fafafa;">
+                <div id="chat-box" style="flex:1; overflow-y:auto; padding:16px; min-height:500px; max-height:65vh; background:#fafafa;">
                     @if(isset($conversation) && count($conversation))
                         @foreach($conversation as $msg)
                             <div style="display:flex; justify-content:flex-end; margin-bottom:8px;">

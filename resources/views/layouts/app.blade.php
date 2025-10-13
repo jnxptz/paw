@@ -51,6 +51,7 @@
     </div>
 </div>
 
+@if (!request()->routeIs('chatbot') && !request()->routeIs('chatbot.*'))
 <footer>
     <div class="footer-content">
         <span>FOLLOW US:</span>
@@ -61,6 +62,7 @@
         <a href="#"><i class="fas fa-paw"></i></a>
     </div>
 </footer>
+@endif
 
 {{-- Load JS from public/js --}}
 <script src="{{ asset('js/' . ($layoutJs ?? 'client.js')) }}"></script>

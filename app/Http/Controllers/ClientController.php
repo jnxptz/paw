@@ -6,50 +6,52 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\ChatLog;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class ClientController extends Controller
 {
-    // Client Dashboard (per-user data)
+    // Dashboard
     public function index()
     {
         $user = Auth::user();
 
-        // Recent conversations of this client (last 20)
         $recentConversations = ChatLog::where('user_id', $user->id)
             ->latest()
             ->take(20)
             ->get();
 
-        // Most asked questions FOR THIS USER (top 20)
-        $mostAsked = ChatLog::where('user_id', $user->id)
-            ->select('question')
+        $mostAsked = ChatLog::select('question', DB::raw('COUNT(*) as count'))
             ->groupBy('question')
-            ->orderByRaw('COUNT(*) DESC')
-            ->limit(20)
+            ->orderByDesc('count')
             ->pluck('question');
 
         return view('client.dashboard', compact('user', 'mostAsked', 'recentConversations'));
     }
 
-    // Client Landing (global data)
+    // Landing
     public function landing()
     {
         $user = Auth::user();
 
-        // Most asked questions globally (top 10)
         $mostAsked = ChatLog::select('question', DB::raw('COUNT(*) as count'))
             ->groupBy('question')
             ->orderByDesc('count')
             ->limit(10)
             ->pluck('question');
 
-        // Recent conversations of this client (last 5)
         $recentConversations = ChatLog::where('user_id', $user->id)
             ->latest()
             ->take(5)
             ->get();
 
         return view('client.landing', compact('user', 'mostAsked', 'recentConversations'));
+    }
+
+    // Show profile
+    public function show()
+    {
+        $user = Auth::user();
+        return view('client.profile', compact('user'));
     }
 
     // Edit profile
@@ -59,6 +61,7 @@ class ClientController extends Controller
         return view('client.edit-profile', compact('user'));
     }
 
+    // Update profile
     public function update(Request $request)
     {
         $user = auth()->user();
@@ -66,11 +69,39 @@ class ClientController extends Controller
         $request->validate([
             'username' => 'required|string|max:255',
             'email' => 'required|email|max:255|unique:users,email,' . $user->id,
+            'profile_image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:2048',
         ]);
 
-        $user->update($request->only('username', 'email'));
+        $data = $request->only('username', 'email');
 
-        return redirect()->route('client.dashboard')->with('success', 'Profile updated!');
+        if ($request->hasFile('profile_image')) {
+            $imageName = time() . '_' . $request->file('profile_image')->getClientOriginalName();
+            $request->file('profile_image')->move(public_path('img/profile'), $imageName);
+            $data['profile_image'] = 'img/profile/' . $imageName;
+        }
+
+        $user->update($data);
+
+        return redirect()->route('client.profile')->with('success', 'Profile updated successfully!');
+    }
+
+    // Change password
+    public function changePassword(Request $request)
+    {
+        $request->validate([
+            'current_password' => 'required',
+            'new_password' => 'required|confirmed|min:8',
+        ]);
+
+        $user = Auth::user();
+
+        if (!Hash::check($request->current_password, $user->password)) {
+            return back()->withErrors(['current_password' => 'Current password is incorrect.']);
+        }
+
+        $user->update(['password' => Hash::make($request->new_password)]);
+
+        return back()->with('success', 'Password changed successfully!');
     }
 
     // Logout
@@ -82,10 +113,18 @@ class ClientController extends Controller
 
         return redirect()->route('login.form');
     }
+    public function updateProfile(Request $request)
+{
+    $user = auth()->user();
 
-    // Show change password form
-    public function showChangePasswordForm()
-    {
-        return view('client.change-password');
-    }
+    $request->validate([
+        'username' => 'required|string|max:255',
+    ]);
+
+    $user->username = $request->username;
+    $user->save();
+
+    return back()->with('success', 'Profile updated successfully!');
+}
+
 }

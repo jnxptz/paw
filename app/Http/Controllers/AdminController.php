@@ -20,61 +20,72 @@ class AdminController extends Controller
     }
 
     public function index(Request $request)
-    {
-        $user = Auth::user();
+{
+    $user = Auth::user();
 
-        // Dashboard Summary
-        $totalQuestions   = ChatLog::count();
-        $totalUnanswered  = ChatLog::whereNull('answer')->count();
-        $totalUsers       = User::count();
+    // ✅ Dashboard Summary
+    $totalQuestions   = ChatLog::count();
+    $totalUnanswered  = ChatLog::whereNull('answer')->count();
+    $totalUsers       = User::count();
 
-        // Most Asked Questions (top 20)
-        $mostAsked = ChatLog::select('question', DB::raw('COUNT(*) as count'))
-            ->groupBy('question')
-            ->orderByDesc('count')
-            ->limit(20)
-            ->get();
+    // ✅ Most Asked Questions (top 20)
+    $mostAsked = ChatLog::select('question', DB::raw('COUNT(*) as count'))
+        ->groupBy('question')
+        ->orderByDesc('count')
+        ->limit(20)
+        ->get();
 
-        // Top Users (top 20)
-        $topUsers = ChatLog::select('user_id', DB::raw('COUNT(*) as conversations_count'))
-            ->with('user')
-            ->groupBy('user_id')
-            ->orderByDesc('conversations_count')
-            ->limit(20)
-            ->get();
+    // ✅ Top Users (top 20)
+    $topUsers = ChatLog::select('user_id', DB::raw('COUNT(*) as conversations_count'))
+        ->with('user')
+        ->groupBy('user_id')
+        ->orderByDesc('conversations_count')
+        ->limit(20)
+        ->get();
 
-        // Daily Trends for last N days
-        $range = $request->get('range', 7); // default last 7 days
-        $start = Carbon::today()->subDays($range - 1);
-        $end   = Carbon::today();
+    // ✅ Chat Trends (last N days)
+    $range = $request->get('range', 7); // default: 7 days
+    $start = Carbon::today()->subDays($range - 1);
+    $end   = Carbon::today();
 
-        $rawTrends = ChatLog::whereBetween('created_at', [$start->copy()->startOfDay(), $end->copy()->endOfDay()])
-            ->selectRaw('DATE(created_at) as date, COUNT(*) as total')
-            ->groupBy('date')
-            ->orderBy('date')
-            ->pluck('total', 'date')
-            ->toArray();
+    $rawTrends = ChatLog::whereBetween('created_at', [$start->copy()->startOfDay(), $end->copy()->endOfDay()])
+        ->selectRaw('DATE(created_at) as date, COUNT(*) as total')
+        ->groupBy('date')
+        ->orderBy('date')
+        ->pluck('total', 'date')
+        ->toArray();
 
-        $trendLabels = [];
-        $trendSeries = [];
+    $trendData = [];
+    $previous = null;
 
-        for ($d = $start->copy(); $d->lte($end); $d->addDay()) {
-            $key = $d->toDateString();
-            $trendLabels[] = $d->format('M d');
-            $trendSeries[] = (int) ($rawTrends[$key] ?? 0);
-        }
+    for ($d = $start->copy(); $d->lte($end); $d->addDay()) {
+        $key = $d->toDateString();
+        $count = (int) ($rawTrends[$key] ?? 0);
 
-        return view('admin.dashboard', compact(
-            'user',
-            'totalQuestions',
-            'totalUnanswered',
-            'totalUsers',
-            'mostAsked',
-            'topUsers',
-            'trendLabels',
-            'trendSeries'
-        ));
+        // compute daily change safely
+        $change = $previous !== null ? $count - $previous : '—';
+        $trendData[] = [
+            'date' => $d->format('M d'),
+            'count' => $count,
+            'change' => is_numeric($change)
+                ? ($change >= 0 ? '+' . $change : (string)$change)
+                : $change,
+        ];
+        $previous = $count;
     }
+
+    // ✅ Return to dashboard view
+    return view('admin.dashboard', compact(
+        'user',
+        'totalQuestions',
+        'totalUnanswered',
+        'totalUsers',
+        'mostAsked',
+        'topUsers',
+        'trendData'
+    ));
+}
+
 
     public function logout(Request $request)
     {
@@ -175,4 +186,24 @@ public function export(Request $request)
 
         return redirect()->back()->with('success', 'Password changed successfully!');
     }
+
+    public function profile()
+{
+    $user = Auth::user();
+    return view('admin.profile', compact('user'));
+}
+
+public function updateProfile(Request $request)
+{
+    $user = Auth::user();
+
+    $request->validate([
+        'username' => 'required|string|max:255',
+    ]);
+
+    $user->update(['username' => $request->username]);
+
+    return redirect()->back()->with('success', 'Profile updated successfully!');
+}
+
 }

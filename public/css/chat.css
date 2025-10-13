@@ -5,6 +5,7 @@ html, body {
   font-family: 'Poppins', sans-serif;
   background: #f3e3f3;
   min-height: 100%;
+  overflow-x: hidden
 }
 
 /* Wrapper to allow sticky footer */
@@ -68,7 +69,17 @@ html, body {
   margin-bottom: 15px;
   color: #231f20;
   flex: 1;
+  /* hide scrollbar (Firefox/IE/Edge legacy) */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
+.chat-box::-webkit-scrollbar { /* hide scrollbar (WebKit) */
+  display: none;
+}
+
+/* Also support views that use an element id instead of class */
+#chat-box { scrollbar-width: none; -ms-overflow-style: none; }
+#chat-box::-webkit-scrollbar { display: none; }
 
 .message {
   margin: 5px 0;
@@ -142,3 +153,5 @@ footer a {
 footer a:hover {
   color: #a11d7c;
 }
+
+
