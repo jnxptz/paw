@@ -8,62 +8,88 @@
 @endphp
 
 @section('content')
-<div class="client-landing-container">
+<div class="client-landing-container" style="padding:40px 20px;">
 
     
 
-    {{-- CONTENT SECTION --}}
-    <section class="content-section" style="padding-top:80px;">
-        <div class="dashboard-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:20px;">
+    {{-- ⚙️ Dashboard Grid --}}
+    <div style="
+        display:flex;
+        justify-content:center;
+        flex-wrap:wrap;
+        gap:24px;
+    ">
 
-            {{-- Frequently Asked Questions (match Client Profile styles) --}}
-            <div class="card shadow" style="background:#fff;border-radius:15px;overflow:hidden;min-height:300px;max-height:400px;display:flex;flex-direction:column;">
-                <div class="card-header" style="padding:12px 16px;background:#e6b6d6;font-weight:700;">
-                    💡 Frequently Asked Questions
-                </div>
-                <div class="card-body" style="padding:16px;overflow-y:auto;flex:1;">
-                    <ul style="margin:0;padding-left:0;list-style:none;">
-                        @forelse($mostAsked as $q)
-                            <li style="margin-bottom:10px;">
-                                <a href="#" style="display:block;padding:10px 12px;border:1px solid #eee;border-radius:8px;background:#f9f9f9;color:#333;text-decoration:none;transition:0.2s;">
-                                    <i class="fas fa-comments" style="margin-right:6px;color:#6b4a6b;"></i>
-                                    {{ $q }}
-                                </a>
-                            </li>
-                        @empty
-                            <li>No questions available yet.</li>
-                        @endforelse
-                    </ul>
-                </div>
-            </div>
-
-            {{-- Recent Conversations (match Client Profile styles) --}}
-            <div class="card shadow" style="background:#fff;border-radius:15px;overflow:hidden;min-height:300px;max-height:400px;display:flex;flex-direction:column;">
-                <div class="card-header" style="padding:12px 16px;background:#d4edda;font-weight:700;">
-                    📝 Your Last 10 Conversations
-                </div>
-                <div class="card-body" style="padding:16px;overflow-y:auto;flex:1;">
-                    <ul style="margin:0;padding-left:0;list-style:none;">
-                        @forelse($recentConversations as $conv)
-                            <li style="margin-bottom:10px;">
-                                <a href="{{ route('chatbot.show', $conv->id) }}" 
-                                   style="display:block;padding:10px 12px;border:1px solid #eee;border-radius:8px;background:#f9f9f9;color:#333;text-decoration:none;transition:0.2s;">
-                                    <div><strong>Q:</strong> {{ $conv->question }}</div>
-                                    <div style="margin-top:4px;"><strong>A:</strong> {{ $conv->answer ?? '— Unanswered —' }}</div>
-                                    <div style="margin-top:4px;font-size:0.8rem;color:#6c757d;">
-                                        {{ $conv->created_at->format('M d, Y h:i A') }}
-                                    </div>
-                                </a>
-                            </li>
-                        @empty
-                            <li>No recent conversations yet.</li>
-                        @endforelse
-                    </ul>
-                </div>
-            </div>
-
+        {{-- 💬 Frequently Asked Questions --}}
+        <div style="
+            background:#fff;
+            border:1px solid #eee;
+            border-radius:14px;
+            width:350px;
+            padding:18px;
+            box-shadow:0 3px 12px rgba(0,0,0,0.05);
+        ">
+            <h3 style="margin:0 0 14px;text-align:center;color:#6b4a6b;">
+                💡 Frequently Asked Questions
+            </h3>
+            <ul style="list-style:none;padding:0;margin:0;max-height:320px;overflow-y:auto;">
+                @forelse($mostAsked as $q)
+                    <li style="
+                        padding:10px 12px;
+                        margin-bottom:8px;
+                        border:1px solid #eee;
+                        border-radius:8px;
+                        background:#fafafa;
+                        font-size:0.9rem;
+                        line-height:1.4;
+                        cursor:default;
+                    ">
+                        <i class="fas fa-question-circle" style="color:#6b4a6b;margin-right:6px;"></i>
+                        {{ $q }}
+                    </li>
+                @empty
+                    <li style="text-align:center;color:#999;">No questions available yet.</li>
+                @endforelse
+            </ul>
         </div>
-    </section>
 
+        {{-- 📝 Recent Conversations --}}
+        <div style="
+            background:#fff;
+            border:1px solid #eee;
+            border-radius:14px;
+            width:500px;
+            padding:18px;
+            box-shadow:0 3px 12px rgba(0,0,0,0.05);
+        ">
+            <h3 style="margin:0 0 14px;text-align:center;color:#28a745;">
+                📝 Your Last 10 Conversations
+            </h3>
+            <ul style="list-style:none;padding:0;margin:0;max-height:320px;overflow-y:auto;">
+                @forelse($recentConversations as $conv)
+                    <li style="
+                        padding:10px 12px;
+                        margin-bottom:8px;
+                        border:1px solid #eee;
+                        border-radius:8px;
+                        background:#fafafa;
+                        font-size:0.9rem;
+                        line-height:1.4;
+                    ">
+                        <div><strong>Q:</strong> {{ $conv->question }}</div>
+                        <div style="margin-top:4px;">
+                            <strong>A:</strong> {{ $conv->answer ?? '— Unanswered —' }}
+                        </div>
+                        <div style="margin-top:4px;font-size:0.8rem;color:#6c757d;text-align:right;">
+                            {{ $conv->created_at->format('M d, Y h:i A') }}
+                        </div>
+                    </li>
+                @empty
+                    <li style="text-align:center;color:#999;">No recent conversations yet.</li>
+                @endforelse
+            </ul>
+        </div>
+
+    </div>
 </div>
 @endsection

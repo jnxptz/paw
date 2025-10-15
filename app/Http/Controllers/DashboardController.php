@@ -12,7 +12,7 @@ class DashboardController extends Controller
     {
         $user = Auth::user();
 
-        // Admin dashboard → see all data
+        
         if ($user->user_type === 'admin') {
             $logs = ChatLog::latest()->take(10)->get();
             $topUsers = ChatLog::selectRaw('user_id, COUNT(*) as total')
@@ -24,7 +24,7 @@ class DashboardController extends Controller
             return view('admin.dashboard', compact('user', 'logs', 'topUsers'));
         }
 
-        // Client/User dashboard → see only their own data
+        
         if ($user->user_type === 'client' || $user->user_type === 'user') {
             $mostAsked = ChatLog::select('question')
                 ->groupBy('question')
@@ -40,7 +40,7 @@ class DashboardController extends Controller
             return view('client.dashboard', compact('user', 'mostAsked', 'recentConversations'));
         }
 
-        // Default (in case no role matched)
+        
         return redirect()->route('login.form')->with('error', 'Unauthorized access.');
     }
 }

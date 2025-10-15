@@ -20,19 +20,19 @@ class ChatbotController extends Controller
         $this->middleware('auth');
     }
 
-    // 🟣 Main chatbot page
+    
     public function index(Request $request)
     {
         $userId = Auth::id();
 
-        // If "new=1" query is passed, force a new chat session
+        
         if ($request->has('new')) {
             $currentSession = ChatSession::create([
                 'user_id' => $userId,
                 'session_name' => 'Session ' . now()->format('M d, Y H:i')
             ]);
         } else {
-            // Otherwise load the most recent session
+            
             $currentSession = ChatSession::where('user_id', $userId)
                 ->latest('updated_at')
                 ->first();
@@ -45,7 +45,7 @@ class ChatbotController extends Controller
             }
         }
 
-        // All sessions list with preview
+
         $sessions = ChatSession::where('user_id', $userId)
             ->with(['chatLogs' => function ($query) {
                 $query->latest()->limit(1);
@@ -66,10 +66,8 @@ class ChatbotController extends Controller
         return view('chat.index', compact('sessions', 'conversation', 'currentSession'));
     }
 
-    // 🟢 “New Chat” — create and reload to new session
-    // 🟢 “New Chat” — create a new session (returns JSON)
-public function newSession(Request $request)
-{
+    public function newSession(Request $request)
+    {
     $userId = Auth::id();
 
     $session = ChatSession::create([
@@ -82,7 +80,7 @@ public function newSession(Request $request)
         'user_id' => $userId
     ]);
 
-    // Return JSON for frontend JS
+    
     return response()->json([
         'success' => true,
         'session_id' => $session->id,
@@ -91,7 +89,7 @@ public function newSession(Request $request)
 }
 
 
-    // 🟡 Send message
+    
     public function send(Request $request)
     {
         Log::info('Chatbot send() triggered', $request->all());
@@ -105,8 +103,7 @@ public function newSession(Request $request)
             return response()->json(['reply' => '⚠️ Please type a message.']);
         }
 
-        // Validate or create session
-        $session = ChatSession::where('id', $sessionId)
+            $session = ChatSession::where('id', $sessionId)
             ->where('user_id', $userId)
             ->first();
 
@@ -137,7 +134,7 @@ public function newSession(Request $request)
         $responseTime = microtime(true) - $start;
 
         try {
-            // If this is the first message in session, rename it to message snippet
+            
             $isFirstMessage = !ChatLog::where('chat_session_id', $session->id)->exists();
             if ($isFirstMessage) {
                 $session->session_name = Str::limit($message, 50, '');
@@ -153,7 +150,7 @@ public function newSession(Request $request)
                 'response_time' => $responseTime,
             ]);
 
-            // Update timestamp for session ordering
+            
             $session->touch();
         } catch (\Exception $e) {
             Log::error('Chat log save failed', ['error' => $e->getMessage()]);
@@ -166,7 +163,7 @@ public function newSession(Request $request)
         ]);
     }
 
-    // 🔵 Show specific conversation
+    
     public function showConversation($id)
 {
     $userId = Auth::id();
@@ -176,7 +173,7 @@ public function newSession(Request $request)
         ->with('chatLogs')
         ->first();
 
-    // 🩵 If deleted or missing, make a new session and redirect
+    
     if (!$currentSession) {
         $newSession = ChatSession::create([
             'user_id' => $userId,
@@ -204,7 +201,7 @@ public function newSession(Request $request)
     return view('chat.index', compact('sessions', 'conversation', 'currentSession'));
 }
 
-    // 🔴 Delete a session and its logs
+    
     public function deleteSession($id)
     {
         $userId = Auth::id();

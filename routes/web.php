@@ -41,11 +41,6 @@ Route::middleware('auth')->group(function () {
     Route::delete('/chatbot/{id}', [ChatbotController::class, 'deleteSession'])->name('chatbot.delete');
 });
 
-
-
-
-
-
 // Admin signup
 Route::prefix('admin')->group(function () {
     Route::get('/register', [AdminRegisterController::class, 'show'])->name('admin.register.form');

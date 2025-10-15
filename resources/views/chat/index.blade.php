@@ -104,62 +104,68 @@
         </div>
     </div>
 
-    {{-- ✅ MAIN CHAT AREA --}}
-    <div style="flex:1; display:flex; justify-content:center; align-items:flex-start; padding-top:40px; padding-right:20px; height:100vh;">
-        <div style="width:100%; display:flex; justify-content:center;">
-            <div class="card shadow" style="
-                background:#fff;
-                border-radius:15px;
-                width:100%;
-                max-width:900px;
-                display:flex;
-                flex-direction:column;
-                overflow:hidden;
-                box-shadow:0 2px 10px rgba(0,0,0,0.08);
+  {{-- ✅ MAIN CHAT AREA --}}
+<div style="flex:1; display:flex; justify-content:center; align-items:flex-start; padding-top:40px; padding-right:20px; height:100vh;">
+    <div style="width:100%; display:flex; justify-content:center;">
+        <div class="card shadow" style="
+            background:#fff;
+            border-radius:15px;
+            width:100%;
+            max-width:1000px; 
+            display:flex;
+            flex-direction:column;
+            overflow:hidden;
+            box-shadow:0 2px 10px rgba(0,0,0,0.08);
+        ">
+            <meta name="csrf-token" content="{{ csrf_token() }}">
+
+            {{-- Header --}}
+            <div style="padding:14px; background:#6b4a6b; font-weight:700; font-size:1.1rem; color:#fff;">
+                🤖 PawTulong Chatbot
+                @if(isset($currentSession))
+                    <div style="font-size:0.85rem; font-weight:400; margin-top:3px; color:#f5f5f5;">
+                        {{ $currentSession->session_name }}
+                    </div>
+                @endif
+            </div>
+
+            {{-- Chat Messages --}}
+            <div id="chat-box" style="
+                flex:1;
+                overflow-y:auto;
+                padding:14px;
+                min-height:380px; /* ⬅️ smaller area */
+                max-height:55vh; /* ⬅️ reduced from 65vh */
+                background:#fafafa;
             ">
-                <meta name="csrf-token" content="{{ csrf_token() }}">
-
-                {{-- Header --}}
-                <div style="padding:16px; background:#6b4a6b; font-weight:700; font-size:1.2rem; color:#fff;">
-                    🤖 PawTulong Chatbot
-                    @if(isset($currentSession))
-                        <div style="font-size:0.9rem; font-weight:400; margin-top:4px; color:#f5f5f5;">
-                            {{ $currentSession->session_name }}
+                @if(isset($conversation) && count($conversation))
+                    @foreach($conversation as $msg)
+                        <div style="display:flex; justify-content:flex-end; margin-bottom:6px;">
+                            <div style="background:#d1e7dd; padding:8px 12px; border-radius:12px; max-width:70%; font-size:0.9rem;">
+                                <strong>You:</strong> {{ e($msg->question) }}
+                            </div>
                         </div>
-                    @endif
-                </div>
-
-                {{-- Chat Messages --}}
-                <div id="chat-box" style="flex:1; overflow-y:auto; padding:16px; min-height:500px; max-height:65vh; background:#fafafa;">
-                    @if(isset($conversation) && count($conversation))
-                        @foreach($conversation as $msg)
-                            <div style="display:flex; justify-content:flex-end; margin-bottom:8px;">
-                                <div style="background:#d1e7dd; padding:10px 14px; border-radius:12px; max-width:70%;">
-                                    <strong>You:</strong> {{ e($msg->question) }}
-                                </div>
+                        <div style="display:flex; justify-content:flex-start; margin-bottom:10px;">
+                            <div style="background:#f8d7da; padding:8px 12px; border-radius:12px; max-width:70%; font-size:0.9rem;">
+                                <strong>Bot:</strong> {{ e($msg->answer) }}
                             </div>
-                            <div style="display:flex; justify-content:flex-start; margin-bottom:12px;">
-                                <div style="background:#f8d7da; padding:10px 14px; border-radius:12px; max-width:70%;">
-                                    <strong>Bot:</strong> {{ e($msg->answer) }}
-                                </div>
-                            </div>
-                        @endforeach
-                    @else
-                        <div style="color:#6c757d;">Start a new conversation!</div>
-                    @endif
-                </div>
+                        </div>
+                    @endforeach
+                @else
+                    <div style="color:#6c757d;">Start a new conversation!</div>
+                @endif
+            </div>
 
-                {{-- Input --}}
-                <div id="chat-input-container" style="display:flex; padding:16px; border-top:1px solid #eee; background:#fff;">
-                    <input type="text" name="message" id="chat-input"
-                        style="flex:1; padding:10px 14px; border:1px solid #ddd; border-radius:8px; margin-right:12px; font-size:0.95rem;"
-                        placeholder="Type your message..." autocomplete="off">
-                    <button type="button" id="send-btn"
-                        style="padding:10px 16px; background:#6b4a6b; color:#fff; border:none; border-radius:8px; font-weight:700; cursor:pointer; transition:0.2s;"
-                        onmouseover="this.style.background='#8a5b8a'" onmouseout="this.style.background='#6b4a6b'">
-                        Send
-                    </button>
-                </div>
+            {{-- Input --}}
+            <div id="chat-input-container" style="display:flex; padding:12px; border-top:1px solid #eee; background:#fff;">
+                <input type="text" name="message" id="chat-input"
+                    style="flex:1; padding:8px 12px; border:1px solid #ddd; border-radius:8px; margin-right:10px; font-size:0.9rem;"
+                    placeholder="Type your message..." autocomplete="off">
+                <button type="button" id="send-btn"
+                    style="padding:8px 14px; background:#6b4a6b; color:#fff; border:none; border-radius:8px; font-weight:700; cursor:pointer; transition:0.2s;"
+                    onmouseover="this.style.background='#8a5b8a'" onmouseout="this.style.background='#6b4a6b'">
+                    Send
+                </button>
             </div>
         </div>
     </div>

@@ -13,7 +13,6 @@ class LandingController extends Controller
 {
     public function __construct()
     {
-        // Require authentication
         $this->middleware('auth');
     }
 
@@ -21,8 +20,7 @@ class LandingController extends Controller
     {
         $user = Auth::user();
 
-        // ✅ Prepare data based on user type
-        // Weekly trends (for both admin and client)
+        // ✅ Get chat trend data
         $start = Carbon::today()->subDays(6);
         $end = Carbon::today();
         $rawTrends = ChatLog::whereBetween('created_at', [$start->copy()->startOfDay(), $end->copy()->endOfDay()])
@@ -40,45 +38,50 @@ class LandingController extends Controller
                 'value' => (int)($rawTrends[$key] ?? 0)
             ]);
         }
+
         $trendLabels = $trendData->pluck('label');
         $trendSeries = $trendData->pluck('value');
 
+        // ✅ ADMIN DASHBOARD
         if ($user->user_type === 'admin') {
-            // Admin dashboard data
-            $totalQuestions = ChatLog::count();
+            $totalChats = ChatLog::count(); // fixed variable name
             $totalUsers = User::count();
+
             $mostAsked = ChatLog::select('question', DB::raw('COUNT(*) as count'))
                 ->groupBy('question')
                 ->orderByDesc('count')
                 ->limit(20)
                 ->get();
+
             $topUsers = ChatLog::select('user_id', DB::raw('COUNT(*) as conversations_count'))
                 ->with('user')
                 ->groupBy('user_id')
                 ->orderByDesc('conversations_count')
                 ->limit(20)
                 ->get();
+
             return view('landing', [
                 'page' => 'home',
-                'totalQuestions' => $totalQuestions,
+                'totalChats' => $totalChats, // 👈 fixed key
                 'totalUsers' => $totalUsers,
                 'mostAsked' => $mostAsked,
                 'topUsers' => $topUsers,
                 'trendLabels' => $trendLabels,
                 'trendSeries' => $trendSeries
             ]);
-        } else {
-            // Client landing view (hero + client cards)
-            $recentConversations = ChatLog::where('user_id', $user->id)
-                ->latest()
-                ->take(5)
-                ->get();
-            // Show ALL users' questions globally (distinct, ordered by frequency)
-            $mostAsked = ChatLog::select('question', DB::raw('COUNT(*) as count'))
-                ->groupBy('question')
-                ->orderByDesc('count')
-                ->pluck('question');
-            return view('client.landing', compact('user', 'recentConversations', 'mostAsked'));
         }
+
+        // ✅ CLIENT LANDING
+        $recentConversations = ChatLog::where('user_id', $user->id)
+            ->latest()
+            ->take(5)
+            ->get();
+
+        $mostAsked = ChatLog::select('question', DB::raw('COUNT(*) as count'))
+            ->groupBy('question')
+            ->orderByDesc('count')
+            ->pluck('question');
+
+        return view('client.landing', compact('user', 'recentConversations', 'mostAsked'));
     }
 }

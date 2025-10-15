@@ -11,6 +11,7 @@ html {
   font-family: 'Poppins', sans-serif;
   background-color: #f7edf7; /* softer pink background */
   color: #231f20;
+  overflow-x: hidden;
 }
 
 /* Ensure footer stays at the bottom even when content is short */

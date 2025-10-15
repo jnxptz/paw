@@ -11,9 +11,8 @@ class ClientLandingController extends Controller
     {
         $user = Auth::user();
 
-        // Fetch data for the landing page
-        $mostAsked = []; // Replace with your logic to fetch frequently asked questions
-        $recentConversations = []; // Replace with logic to fetch last 10 conversations
+        $mostAsked = []; 
+        $recentConversations = []; 
 
         return view('client.landing', compact('user', 'mostAsked', 'recentConversations'));
     }

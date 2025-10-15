@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Hash;
 
 class ClientController extends Controller
 {
-    // Dashboard
+    
     public function index()
     {
         $user = Auth::user();
@@ -28,7 +28,7 @@ class ClientController extends Controller
         return view('client.dashboard', compact('user', 'mostAsked', 'recentConversations'));
     }
 
-    // Landing
+    
     public function landing()
     {
         $user = Auth::user();
@@ -47,7 +47,7 @@ class ClientController extends Controller
         return view('client.landing', compact('user', 'mostAsked', 'recentConversations'));
     }
 
-    // Show profile
+    
     public function show()
     {
         $user = Auth::user();
@@ -61,7 +61,7 @@ class ClientController extends Controller
         return view('client.edit-profile', compact('user'));
     }
 
-    // Update profile
+    
     public function update(Request $request)
     {
         $user = auth()->user();
@@ -85,7 +85,7 @@ class ClientController extends Controller
         return redirect()->route('client.profile')->with('success', 'Profile updated successfully!');
     }
 
-    // Change password
+    
     public function changePassword(Request $request)
     {
         $request->validate([
@@ -104,7 +104,7 @@ class ClientController extends Controller
         return back()->with('success', 'Password changed successfully!');
     }
 
-    // Logout
+    
     public function logout(Request $request)
     {
         Auth::logout();

@@ -25,6 +25,8 @@
 @endif
 
 {{-- Section Header --}}
+
+
 <div style="
     width: 100%;
     display: flex;
@@ -41,6 +43,7 @@
         style="padding:8px 14px; font-size:14px; border-radius:6px; font-weight:600; display:flex; align-items:center; gap:6px; margin-right:85px;">
         <i class="fas fa-plus-circle"></i> Add New Product
     </button>
+   
 </div>
 </div>
 
@@ -166,16 +169,23 @@
             </div>
 
             <div class="form-group">
-                <label for="edit_product_category">Category:</label>
-                <select id="edit_product_category" name="category" required>
+                <label>Category:</label>
+                <select name="category" required>
+                    <option value="">Select Category</option>
                     <option value="Food">Food</option>
                     <option value="Toys">Toys</option>
                     <option value="Enclosures">Enclosures</option>
                     <option value="Grooming">Grooming</option>
                     <option value="Health">Health</option>
                     <option value="Accessories">Accessories</option>
+                    {{-- ✅ Newly Added Categories --}}
+                    <option value="Vaccines">Vaccines</option>
+                    <option value="Dewormers">Dewormers</option>
+                    <option value="Tick & Flea Preventives">Tick & Flea Preventives</option>
+                    <option value="Heartworm Preventives">Heartworm Preventives</option>
                 </select>
             </div>
+
 
             <div class="form-actions">
                 <button type="submit" class="save-btn">

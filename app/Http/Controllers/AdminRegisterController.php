@@ -10,7 +10,7 @@ class AdminRegisterController extends Controller
 {
     public function show()
     {
-        return view('auth.admin-signup'); // resources/views/auth/admin-signup.blade.php
+        return view('auth.admin-signup'); 
     }
 
     public function store(Request $request)

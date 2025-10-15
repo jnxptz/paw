@@ -6,16 +6,12 @@ use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 class Kernel extends HttpKernel
 {
-    /**
-     * Global middleware stack.
-     */
+    
     protected $middleware = [
-        // Add global middleware if needed
+        
     ];
 
-    /**
-     * Middleware groups.
-     */
+    
     protected $middlewareGroups = [
         'web' => [
             \App\Http\Middleware\EncryptCookies::class,
@@ -32,14 +28,12 @@ class Kernel extends HttpKernel
         ],
     ];
 
-    /**
-     * Route middleware aliases.
-     */
+    
     protected $middlewareAliases = [
         'auth' => \App\Http\Middleware\Authenticate::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
 
-        // ✅ Custom middlewares
+        
         'admin' => \App\Http\Middleware\AdminMiddleware::class,
         'client' => \App\Http\Middleware\ClientMiddleware::class,
     ];

@@ -15,17 +15,17 @@ class DialogflowTestController extends Controller
         $this->dialogflow = $dialogflow;
     }
 
-    // GET request to show a simple form
+    
     public function test()
     {
         return view('df_test');
     }
 
-    // POST request to send message to Dialogflow
+    
     public function send(Request $request)
     {
         $text = $request->input('message', 'Hello');
-        $sessionId = $request->session()->getId(); // unique session per user
+        $sessionId = $request->session()->getId(); 
 
         try {
             $result = $this->dialogflow->detectIntent($sessionId, $text);
