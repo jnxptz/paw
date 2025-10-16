@@ -5,7 +5,8 @@ html, body {
   font-family: 'Poppins', sans-serif;
   background: #f3e3f3;
   min-height: 100%;
-  overflow-x: hidden
+  overflow-x: hidden; /* prevent horizontal scroll */
+  overflow-y: hidden;
 }
 
 /* Wrapper to allow sticky footer */

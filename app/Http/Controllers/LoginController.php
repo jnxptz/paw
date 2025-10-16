@@ -23,9 +23,9 @@ class LoginController extends Controller
             $request->session()->regenerate();
             $user = Auth::user();
             if ($user->user_type === 'admin') {
-                return redirect('/admin');
+                return redirect('/landing');
             } elseif ($user->user_type === 'client') {
-                return redirect('/client');
+                return redirect('/landing');
             } else {
                 Auth::logout();
                 return redirect()->route('login.form')->withErrors('Invalid user type.');

@@ -30,22 +30,34 @@ class ClientController extends Controller
 
     
     public function landing()
-    {
-        $user = Auth::user();
+{
+    $user = Auth::user();
 
-        $mostAsked = ChatLog::select('question', DB::raw('COUNT(*) as count'))
-            ->groupBy('question')
-            ->orderByDesc('count')
-            ->limit(10)
-            ->pluck('question');
+    // ✅ Total chats by this client
+    $totalChats = ChatLog::where('user_id', $user->id)->count();
 
-        $recentConversations = ChatLog::where('user_id', $user->id)
-            ->latest()
-            ->take(5)
-            ->get();
+    // ✅ Most asked questions by this client only
+    $mostAsked = ChatLog::where('user_id', $user->id)
+        ->select('question', DB::raw('COUNT(*) as count'))
+        ->groupBy('question')
+        ->orderByDesc('count')
+        ->limit(10)
+        ->pluck('question');
 
-        return view('client.landing', compact('user', 'mostAsked', 'recentConversations'));
-    }
+    // ✅ Their 10 most recent conversations
+    $recentConversations = ChatLog::where('user_id', $user->id)
+        ->latest()
+        ->take(10)
+        ->get();
+
+        dd([
+    'user_id' => $user->id,
+    'totalChats' => ChatLog::where('user_id', $user->id)->count(),
+    'existingLogs' => ChatLog::where('user_id', $user->id)->pluck('question'),
+]);
+
+    return view('client.landing', compact('user', 'mostAsked', 'recentConversations', 'totalChats'));
+}
 
     
     public function show()

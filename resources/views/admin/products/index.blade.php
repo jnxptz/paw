@@ -71,7 +71,7 @@
                                 data-description="{{ $product->description }}"
                                 data-image="{{ str_replace('img/', '', $product->image_path) }}"
                                 data-category="{{ $product->category }}">
-                            <i class="fas fa-edit"></i> Edit
+                            <i class="fas fa-edit"></i> 
                         </button>
 
                         <form action="{{ route('admin.products.destroy', $product) }}" method="POST" style="display:inline;">
@@ -79,7 +79,7 @@
                             @method('DELETE')
                             <button type="submit" class="delete-btn"
                                     onclick="return confirm('Are you sure you want to delete this product?')">
-                                <i class="fas fa-trash"></i> Delete
+                                <i class="fas fa-trash"></i> 
                             </button>
                         </form>
                     </td>
@@ -112,17 +112,16 @@
             </div>
 
             <div class="form-group">
-                <label>Category:</label>
-                <select name="category" required>
-                    <option value="">Select Category</option>
-                    <option value="Food">Food</option>
-                    <option value="Toys">Toys</option>
-                    <option value="Enclosures">Enclosures</option>
-                    <option value="Grooming">Grooming</option>
-                    <option value="Health">Health</option>
-                    <option value="Accessories">Accessories</option>
-                </select>
-            </div>
+    <label>Category:</label>
+    <select name="category" required>
+        <option value="">Select Category</option>
+        <option value="Vaccines">Vaccines</option>
+        <option value="Dewormers">Dewormers</option>
+        <option value="Tick & Flea Preventives">Tick & Flea Preventives</option>
+        <option value="Heartworm Preventives">Heartworm Preventives</option>
+    </select>
+</div>
+
 
             <div class="form-group">
                 <label>Product Image</label>
@@ -172,13 +171,6 @@
                 <label>Category:</label>
                 <select name="category" required>
                     <option value="">Select Category</option>
-                    <option value="Food">Food</option>
-                    <option value="Toys">Toys</option>
-                    <option value="Enclosures">Enclosures</option>
-                    <option value="Grooming">Grooming</option>
-                    <option value="Health">Health</option>
-                    <option value="Accessories">Accessories</option>
-                    {{-- ✅ Newly Added Categories --}}
                     <option value="Vaccines">Vaccines</option>
                     <option value="Dewormers">Dewormers</option>
                     <option value="Tick & Flea Preventives">Tick & Flea Preventives</option>

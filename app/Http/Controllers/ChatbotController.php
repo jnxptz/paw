@@ -220,4 +220,21 @@ class ChatbotController extends Controller
 
         return response()->json(['success' => true]);
     }
+    public function rename(Request $request, $id)
+{
+    $request->validate([
+        'name' => 'required|string|max:255',
+    ]);
+
+    $session = ChatSession::find($id);
+    if (!$session) {
+        return response()->json(['success' => false, 'message' => 'Session not found'], 404);
+    }
+
+    $session->session_name = $request->name;
+    $session->save();
+
+    return response()->json(['success' => true, 'session_name' => $session->session_name]);
+}
+
 }

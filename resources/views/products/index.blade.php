@@ -17,19 +17,21 @@
     </div>
 
     <div class="filter-box">
-        <form method="GET" action="{{ route('products.index') }}">
-            <label for="category">Category:</label>
-            <select name="category" id="category">
-                <option value="">All</option>
-                @foreach($categories as $cat)
-                    <option value="{{ $cat }}" {{ $selected_category === $cat ? 'selected' : '' }}>
-                        {{ $cat }}
-                    </option>
-                @endforeach
-            </select>
-            <button type="submit">Apply</button>
-        </form>
-    </div><div class="product-grid">
+    <form method="GET" action="{{ route('products.index') }}" style="display:flex; align-items:center; gap:10px;">
+        <label for="category">Category:</label>
+        <select name="category" id="category">
+            <option value="">All</option>
+            @foreach($categories as $cat)
+                <option value="{{ $cat }}" {{ $selected_category === $cat ? 'selected' : '' }}>
+                    {{ $cat }}
+                </option>
+            @endforeach
+        </select>
+        <button type="submit">Apply</button>
+    </form>
+</div>
+
+    <div class="product-grid">
     @forelse($products as $product)
         <div class="product-card"
              data-name="{{ $product->name }}"

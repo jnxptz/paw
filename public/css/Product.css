@@ -439,10 +439,10 @@ footer {
 
 .filter-box form {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap; /* prevent wrapping */
   gap: 10px;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start; /* align left */
   width: 100%;
 }
 
@@ -458,7 +458,7 @@ footer {
   border-radius: 8px;
   outline: none;
   font-size: 14px;
-  transition: 0.2s;
+  min-width: 120px; /* optional: ensures uniform width */
 }
 
 .filter-box select:focus,

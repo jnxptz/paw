@@ -82,22 +82,19 @@
                 </div>
             </div>
 
-            {{-- Save Button --}}
+            {{-- Save Changes Button (hidden by default) --}}
             <div style="grid-column:span 2; text-align:center; margin-top:10px;">
-    <button type="submit" class="add-btn" 
-        style="padding:6px 20px; font-size:0.9rem; border-radius:6px;">
-        Save Changes
-    </button>
-</div>
+                <button type="submit" id="saveChangesBtn" class="add-btn" 
+                    style="padding:6px 20px; font-size:0.9rem; border-radius:6px; display:none;">
+                    Save Changes
+                </button>
+            </div>
         </form>
 
         {{-- Change Password Link --}}
         <div style="text-align:center;margin-top:10px;padding-top:10px;border-top:1px solid #eee;">
             <a href="#" id="changePasswordLink" 
-               style="color:#6b4a6b;
-               font-weight:600;
-               text-decoration:underline;
-               cursor:pointer;">
+               style="color:#6b4a6b;font-weight:600;text-decoration:underline;cursor:pointer;">
                Change Password
             </a>
         </div>
@@ -110,7 +107,7 @@
     <div class="modal-content" style="background:#fff; padding:24px; border-radius:12px; max-width:400px; width:90%; position:relative;">
         <span class="close" style="position:absolute; top:10px; right:16px; font-size:20px; cursor:pointer;">&times;</span>
         <h2 style="text-align:center; margin-bottom:16px;">Change Password</h2>
-        <form action="{{ route('client.changePassword') }}" method="POST">
+        <form id="changePasswordForm" method="POST">
             @csrf
             <div class="form-group" style="margin-bottom:12px;">
                 <label for="current_password">Current Password</label>
@@ -125,12 +122,22 @@
                 <input type="password" name="new_password_confirmation" class="form-control" required>
             </div>
             <button type="submit" class="add-btn" style="width:100%; margin-top:12px;">Save</button>
+            <div id="passwordFeedback" style="margin-top:10px; font-size:0.9rem;"></div>
         </form>
     </div>
 </div>
 
-{{-- JS to open/close modal --}}
+{{-- JS Section --}}
 <script>
+// Show Save Changes button only when name changes
+const nameInput = document.querySelector('input[name="username"]');
+const saveBtn = document.getElementById('saveChangesBtn');
+
+nameInput.addEventListener('input', () => {
+    saveBtn.style.display = nameInput.value.trim() !== '{{ $user->username }}' ? 'inline-block' : 'none';
+});
+
+// Modal open/close
 const modal = document.getElementById('changePasswordModal');
 const link = document.getElementById('changePasswordLink');
 const close = modal.querySelector('.close');
@@ -145,7 +152,45 @@ close.addEventListener('click', () => {
 });
 
 window.addEventListener('click', e => {
-    if (e.target == modal) modal.style.display = 'none';
+    if (e.target === modal) modal.style.display = 'none';
+});
+
+// AJAX Password Change
+const passwordForm = document.getElementById('changePasswordForm');
+const feedback = document.getElementById('passwordFeedback');
+
+passwordForm.addEventListener('submit', async e => {
+    e.preventDefault();
+    feedback.innerHTML = 'Updating...';
+    feedback.style.color = '#6b4a6b';
+
+    const formData = new FormData(passwordForm);
+
+    try {
+        const response = await fetch("{{ route('client.changePassword') }}", {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Accept': 'application/json'
+            },
+            body: formData
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            feedback.style.color = 'green';
+            feedback.innerHTML = data.message || 'Password updated successfully!';
+            passwordForm.reset();
+            setTimeout(() => modal.style.display = 'none', 1500);
+        } else {
+            feedback.style.color = 'red';
+            feedback.innerHTML = data.message || 'Error updating password.';
+        }
+    } catch (err) {
+        feedback.style.color = 'red';
+        feedback.innerHTML = 'Network error. Please try again.';
+    }
 });
 </script>
 @endsection

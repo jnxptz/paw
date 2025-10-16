@@ -30,7 +30,7 @@
                     <a href="{{ $isAdmin ? route('admin.dashboard') : route('client.dashboard') }}" class="{{ ($page ?? '') === 'profile' ? 'active' : '' }}">Profile</a>
                     @if($isAdmin)
                         <a href="{{ route('admin.products') }}"
-                           class="{{ request()->routeIs('admin.products*') ? 'active' : (($page ?? '') === 'add_product' ? 'active' : '') }}">Add Products</a>
+                           class="{{ request()->routeIs('admin.products*') ? 'active' : (($page ?? '') === 'add_product' ? 'active' : '') }}">Manage Products</a>
                         <a href="{{ route('users.index') }}"
                            class="{{ request()->routeIs('users.*') ? 'active' : (($page ?? '') === 'manage_users' ? 'active' : '') }}">Manage Users</a>
                     @endif
