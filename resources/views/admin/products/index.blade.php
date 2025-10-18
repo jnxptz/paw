@@ -36,9 +36,7 @@
     padding-left: 40px;   /* keep small space for the title */
     padding-right: 0;     /* push button all the way right */
 ">
-    <h2 style="font-weight: 600; margin: 0; display: flex; align-items: center; gap: 6px;">
-        <i class="fas fa-list"></i> Current Products
-    </h2>
+ 
     <button id="openAddModal" class="add-btn"
         style="padding:8px 14px; font-size:14px; border-radius:6px; font-weight:600; display:flex; align-items:center; gap:6px; margin-right:85px;">
         <i class="fas fa-plus-circle"></i> Add New Product
@@ -228,6 +226,20 @@ function previewAddImage(file) {
 const editDropZone = document.getElementById('edit-drop-zone');
 const editFileInput = document.getElementById('edit_image');
 const editPreview = document.getElementById('edit_preview');
+// 🟣 Edit Modal Close Functionality
+const editModal = document.getElementById('editModal');
+const closeEditBtn = editModal.querySelector('.close');
+
+closeEditBtn.addEventListener('click', () => {
+    editModal.style.display = 'none';
+});
+
+window.addEventListener('click', e => {
+    if (e.target === editModal) {
+        editModal.style.display = 'none';
+    }
+});
+
 editDropZone.addEventListener('click', () => editFileInput.click());
 editDropZone.addEventListener('dragover', e => { e.preventDefault(); editDropZone.style.background = '#f3e6f6'; });
 editDropZone.addEventListener('dragleave', e => { e.preventDefault(); editDropZone.style.background = '#fdf9fd'; });

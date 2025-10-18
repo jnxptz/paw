@@ -31,6 +31,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/send', [ChatbotController::class, 'send'])->name('chatbot.send');
         Route::get('/{id}', [ChatbotController::class, 'showConversation'])->name('chatbot.show');
         Route::post('/new', [ChatbotController::class, 'newSession'])->name('chatbot.new');
+        Route::post('/{id}/rename', [ChatbotController::class, 'rename'])->name('chatbot.rename');
         Route::delete('/{id}', [ChatbotController::class, 'deleteSession'])->name('chatbot.delete');
     });
 });
@@ -67,7 +68,6 @@ Route::middleware(['auth', \App\Http\Middleware\ClientMiddleware::class])
         Route::get('/profile', [ClientController::class, 'show'])->name('client.profile');
         Route::get('/profile/edit', [ClientController::class, 'edit'])->name('client.profile.edit');
         Route::put('/profile/update', [ClientController::class, 'updateProfile'])->name('client.updateProfile');
-
         Route::post('/change-password', [ClientController::class, 'changePassword'])->name('client.changePassword');
         Route::post('/logout', [ClientController::class, 'logout'])->name('client.logout');
     });

@@ -33,10 +33,10 @@ class ClientController extends Controller
 {
     $user = Auth::user();
 
-    // ✅ Total chats by this client
+    
     $totalChats = ChatLog::where('user_id', $user->id)->count();
 
-    // ✅ Most asked questions by this client only
+    
     $mostAsked = ChatLog::where('user_id', $user->id)
         ->select('question', DB::raw('COUNT(*) as count'))
         ->groupBy('question')
@@ -44,7 +44,7 @@ class ClientController extends Controller
         ->limit(10)
         ->pluck('question');
 
-    // ✅ Their 10 most recent conversations
+    
     $recentConversations = ChatLog::where('user_id', $user->id)
         ->latest()
         ->take(10)
@@ -66,7 +66,7 @@ class ClientController extends Controller
         return view('client.profile', compact('user'));
     }
 
-    // Edit profile
+    
     public function edit()
     {
         $user = auth()->user();

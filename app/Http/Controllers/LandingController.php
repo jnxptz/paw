@@ -20,7 +20,7 @@ class LandingController extends Controller
     {
         $user = Auth::user();
 
-        // ✅ Get chat trend data
+        
         $start = Carbon::today()->subDays(6);
         $end = Carbon::today();
         $rawTrends = ChatLog::whereBetween('created_at', [$start->copy()->startOfDay(), $end->copy()->endOfDay()])
@@ -42,9 +42,9 @@ class LandingController extends Controller
         $trendLabels = $trendData->pluck('label');
         $trendSeries = $trendData->pluck('value');
 
-        // ✅ ADMIN DASHBOARD
+        
         if ($user->user_type === 'admin') {
-            $totalChats = ChatLog::count(); // fixed variable name
+            $totalChats = ChatLog::count(); 
             $totalUsers = User::count();
 
             $mostAsked = ChatLog::select('question', DB::raw('COUNT(*) as count'))
@@ -62,7 +62,7 @@ class LandingController extends Controller
 
             return view('landing', [
                 'page' => 'home',
-                'totalChats' => $totalChats, // 👈 fixed key
+                'totalChats' => $totalChats, 
                 'totalUsers' => $totalUsers,
                 'mostAsked' => $mostAsked,
                 'topUsers' => $topUsers,
@@ -71,7 +71,7 @@ class LandingController extends Controller
             ]);
         }
 
-        // ✅ CLIENT LANDING
+        
         $recentConversations = ChatLog::where('user_id', $user->id)
             ->latest()
             ->take(5)

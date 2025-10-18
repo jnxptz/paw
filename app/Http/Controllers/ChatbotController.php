@@ -20,19 +20,16 @@ class ChatbotController extends Controller
         $this->middleware('auth');
     }
 
-    
     public function index(Request $request)
     {
         $userId = Auth::id();
 
-        
         if ($request->has('new')) {
             $currentSession = ChatSession::create([
                 'user_id' => $userId,
                 'session_name' => 'Session ' . now()->format('M d, Y H:i')
             ]);
         } else {
-            
             $currentSession = ChatSession::where('user_id', $userId)
                 ->latest('updated_at')
                 ->first();
@@ -44,7 +41,6 @@ class ChatbotController extends Controller
                 ]);
             }
         }
-
 
         $sessions = ChatSession::where('user_id', $userId)
             ->with(['chatLogs' => function ($query) {
@@ -68,28 +64,25 @@ class ChatbotController extends Controller
 
     public function newSession(Request $request)
     {
-    $userId = Auth::id();
+        $userId = Auth::id();
 
-    $session = ChatSession::create([
-        'user_id' => $userId,
-        'session_name' => 'Session ' . now()->format('M d, Y H:i')
-    ]);
+        $session = ChatSession::create([
+            'user_id' => $userId,
+            'session_name' => 'Session ' . now()->format('M d, Y H:i')
+        ]);
 
-    Log::info('New chat session created', [
-        'session_id' => $session->id,
-        'user_id' => $userId
-    ]);
+        Log::info('New chat session created', [
+            'session_id' => $session->id,
+            'user_id' => $userId
+        ]);
 
-    
-    return response()->json([
-        'success' => true,
-        'session_id' => $session->id,
-        'session_name' => $session->session_name
-    ]);
-}
+        return response()->json([
+            'success' => true,
+            'session_id' => $session->id,
+            'session_name' => $session->session_name
+        ]);
+    }
 
-
-    
     public function send(Request $request)
     {
         Log::info('Chatbot send() triggered', $request->all());
@@ -103,7 +96,7 @@ class ChatbotController extends Controller
             return response()->json(['reply' => '⚠️ Please type a message.']);
         }
 
-            $session = ChatSession::where('id', $sessionId)
+        $session = ChatSession::where('id', $sessionId)
             ->where('user_id', $userId)
             ->first();
 
@@ -119,7 +112,6 @@ class ChatbotController extends Controller
 
         try {
             $result = $this->dialogflow->detectIntent($session->id, $message);
-
             if ($result && isset($result->fulfillmentText)) {
                 $reply = $result->fulfillmentText;
             }
@@ -134,7 +126,6 @@ class ChatbotController extends Controller
         $responseTime = microtime(true) - $start;
 
         try {
-            
             $isFirstMessage = !ChatLog::where('chat_session_id', $session->id)->exists();
             if ($isFirstMessage) {
                 $session->session_name = Str::limit($message, 50, '');
@@ -150,7 +141,6 @@ class ChatbotController extends Controller
                 'response_time' => $responseTime,
             ]);
 
-            
             $session->touch();
         } catch (\Exception $e) {
             Log::error('Chat log save failed', ['error' => $e->getMessage()]);
@@ -163,45 +153,43 @@ class ChatbotController extends Controller
         ]);
     }
 
-    
     public function showConversation($id)
-{
-    $userId = Auth::id();
+    {
+        $userId = Auth::id();
 
-    $currentSession = ChatSession::where('id', $id)
-        ->where('user_id', $userId)
-        ->with('chatLogs')
-        ->first();
+        $currentSession = ChatSession::where('id', $id)
+            ->where('user_id', $userId)
+            ->with('chatLogs')
+            ->first();
 
-    
-    if (!$currentSession) {
-        $newSession = ChatSession::create([
-            'user_id' => $userId,
-            'session_name' => 'Session ' . now()->format('M d, Y H:i')
-        ]);
+        if (!$currentSession) {
+            $newSession = ChatSession::create([
+                'user_id' => $userId,
+                'session_name' => 'Session ' . now()->format('M d, Y H:i')
+            ]);
+            return redirect()->route('chatbot.show', ['id' => $newSession->id]);
+        }
 
-        return redirect()->route('chatbot.show', ['id' => $newSession->id]);
+        $sessions = ChatSession::where('user_id', $userId)
+            ->with(['chatLogs' => function ($query) {
+                $query->latest()->limit(1);
+            }])
+            ->orderBy('updated_at', 'desc')
+            ->get()
+            ->map(function ($session) {
+                $latestLog = $session->chatLogs->first();
+                $session->preview = $latestLog ? substr($latestLog->question, 0, 50) . '...' : 'No messages yet';
+                $session->last_updated = $latestLog
+                    ? $latestLog->created_at->format('M d, Y H:i')
+                    : $session->created_at->format('M d, Y H:i');
+                return $session;
+            });
+
+        $conversation = $currentSession->chatLogs()->orderBy('created_at')->get();
+
+        return view('chat.index', compact('sessions', 'conversation', 'currentSession'));
     }
 
-    $sessions = ChatSession::where('user_id', $userId)
-        ->with(['chatLogs' => function ($query) {
-            $query->latest()->limit(1);
-        }])
-        ->orderBy('updated_at', 'desc')
-        ->get()
-        ->map(function ($session) {
-            $latestLog = $session->chatLogs->first();
-            $session->preview = $latestLog ? substr($latestLog->question, 0, 50) . '...' : 'No messages yet';
-            $session->last_updated = $latestLog ? $latestLog->created_at->format('M d, Y H:i') : $session->created_at->format('M d, Y H:i');
-            return $session;
-        });
-
-    $conversation = $currentSession->chatLogs()->orderBy('created_at')->get();
-
-    return view('chat.index', compact('sessions', 'conversation', 'currentSession'));
-}
-
-    
     public function deleteSession($id)
     {
         $userId = Auth::id();
@@ -220,21 +208,26 @@ class ChatbotController extends Controller
 
         return response()->json(['success' => true]);
     }
+
     public function rename(Request $request, $id)
-{
-    $request->validate([
-        'name' => 'required|string|max:255',
-    ]);
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+        ]);
 
-    $session = ChatSession::find($id);
-    if (!$session) {
-        return response()->json(['success' => false, 'message' => 'Session not found'], 404);
+        $userId = Auth::id();
+
+        $session = ChatSession::where('id', $id)
+            ->where('user_id', $userId)
+            ->first();
+
+        if (!$session) {
+            return response()->json(['success' => false, 'message' => 'Session not found'], 404);
+        }
+
+        $session->session_name = $request->name;
+        $session->save();
+
+        return response()->json(['success' => true, 'session_name' => $session->session_name]);
     }
-
-    $session->session_name = $request->name;
-    $session->save();
-
-    return response()->json(['success' => true, 'session_name' => $session->session_name]);
-}
-
 }
