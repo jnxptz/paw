@@ -163,7 +163,6 @@ a {
   color: #8a3d70;
 }
 
-
 /* Hero section */
 main {
   display: flex;
@@ -209,19 +208,18 @@ main {
   pointer-events: none;
 }
 
-
 footer {
-      background: #f2cde0;
-    padding: 18px 0 10px 0;
-    position: relative;
-    left: 0;
-    bottom: 0;
-    width: 100vw;
-    border-radius: 30px 30px 0 0;
-    box-shadow: 0 -4px 0 #c29ab3;
-    box-sizing: border-box;
-    z-index: 100;
-    margin-top: auto; /* push to bottom in flex layout */
+  background: #f2cde0;
+  padding: 18px 0 10px 0;
+  position: relative;
+  left: 0;
+  bottom: 0;
+  width: 100vw;
+  border-radius: 30px 30px 0 0;
+  box-shadow: 0 -4px 0 #c29ab3;
+  box-sizing: border-box;
+  z-index: 100;
+  margin-top: auto; /* push to bottom in flex layout */
 }
 
 .footer-content {
@@ -233,13 +231,12 @@ footer {
 }
 
 .footer-content span {
-    font-weight: 700;
-    color: #fff;
-    margin-right: 10px;
-    font-size: 1rem;
-    letter-spacing: 1px;
-    padding-left: 30px;
-    
+  font-weight: 700;
+  color: #fff;
+  margin-right: 10px;
+  font-size: 1rem;
+  letter-spacing: 1px;
+  padding-left: 30px;
 }
 
 .footer-content a {
@@ -294,9 +291,9 @@ footer {
   cursor: pointer;
 }
 .logout-btn:hover { background: #f8f9fa; }
-/* --- 📱 iPhone 14 Responsive Layout --- */
-@media (max-width: 430px) {
 
+/* --- 📱 Enhanced Responsive for Small Devices (up to 430px) --- */
+@media (max-width: 430px) {
   /* HEADER */
   .header {
     padding: 6px 12px;
@@ -319,7 +316,7 @@ footer {
   }
 
   .nav-links {
-    display: flex !important;
+    display: none; /* Hide nav links on very small screens to prioritize dropdown */
     gap: 18px;
     padding-left: 0;
     flex-wrap: wrap;
@@ -339,51 +336,134 @@ footer {
   }
 
   /* BODY */
-  .client-landing-container {
-    padding: 15px 10px !important;
+  main {
+    height: auto; /* Allow height to adjust based on content */
+    padding: 15px 10px;
+    min-height: calc(100vh - 120px); /* Adjust for smaller header/footer */
   }
 
-  .client-landing-container > div:first-child {
+  .hero {
     flex-direction: column;
-    gap: 12px !important;
+    gap: 20px;
   }
 
-  .client-landing-container p {
-    font-size: 0.9rem !important;
+  .hero-text {
+    max-width: 100%;
+    text-align: center;
+    margin-bottom: 20px;
   }
 
-  .client-landing-container > div:last-child {
-    flex-direction: column !important;
-    gap: 16px !important;
-    padding: 0 8px 30px !important;
+  .hero-text h1 {
+    font-size: 2rem; /* Smaller for very small screens */
+    line-height: 1.2;
+    margin-bottom: 16px;
   }
 
-  .client-landing-container div[style*="width:360px"],
-  .client-landing-container div[style*="width:650px"] {
-    width: 100% !important;
+  .hero-text p {
+    font-size: 1rem;
+    line-height: 1.4;
   }
 
-  .client-landing-container [style*="grid-template-columns"] {
-    grid-template-columns: 1fr !important;
+  .hero-image img {
+    max-width: 100%; /* Full width on small screens */
+    height: auto;
   }
 
   /* FOOTER */
   footer {
-    padding: 10px 0;
-    border-radius: 20px 20px 0 0;
+    background: #e6b6d6;
+    padding: 12px 0 8px 0; /* Reduced padding */
+    position: relative; /* Keep fixed for small screens */
+    left: 0;
+    bottom: 0;
+    width: 100vw;
+    border-radius: 20px 20px 0 0; /* Smaller radius */
+    box-shadow: 0 -4px 0 #a97c9b;
+    box-sizing: border-box;
+    z-index: 100;
   }
 
   .footer-content {
-    flex-direction: column;
+    display: flex;
     align-items: center;
-    gap: 6px;
+    justify-content: center; /* Center content */
+    padding-left: 0; /* Remove left padding */
+    gap: 12px; /* Smaller gap */
+    margin: 0;
+    max-width: none;
   }
 
   .footer-content span {
-    font-size: 0.85rem;
+    font-weight: 700;
+    color: #fff;
+    margin-right: 8px;
+    font-size: 0.9rem; /* Smaller font */
+    letter-spacing: 0.5px;
+    padding-left: 0; /* Remove padding */
   }
 
   .footer-content a {
-    font-size: 1.1rem;
+    color: #231f20;
+    font-size: 1.1rem; /* Smaller icons */
+    margin-right: 8px;
+    transition: color 0.2s;
+  }
+
+  .footer-content a:hover {
+    color: #a11d7c;
+  }
+}
+
+/* Additional small device tweaks for tablets and mid-range phones */
+@media (max-width: 600px) {
+  .header {
+    padding: 8px 20px;
+  }
+
+  .logo {
+    width: 60px;
+    height: 60px;
+    margin-right: 10px;
+  }
+
+  .brand {
+    font-size: 1.8rem;
+    font-weight: 900;
+  }
+
+  .nav-links {
+    display: none; /* Still hide on tablets for simplicity */
+  }
+
+  main {
+    padding: 20px 15px;
+  }
+
+  .hero-text h1 {
+    font-size: 2.8rem;
+  }
+
+  .hero-text p {
+    font-size: 1rem;
+  }
+
+  .hero-image img {
+    max-width: 280px;
+  }
+
+  footer {
+    padding: 16px 0 10px 0;
+  }
+
+  .footer-content {
+    gap: 15px;
+  }
+
+  .footer-content span {
+    font-size: 0.95rem;
+  }
+
+  .footer-content a {
+    font-size: 1.2rem;
   }
 }

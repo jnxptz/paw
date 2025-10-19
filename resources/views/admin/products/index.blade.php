@@ -167,7 +167,7 @@
 
             <div class="form-group">
                 <label>Category:</label>
-                <select name="category" required>
+                <select id="edit_product_category" name="category" required>
                     <option value="">Select Category</option>
                     <option value="Vaccines">Vaccines</option>
                     <option value="Dewormers">Dewormers</option>

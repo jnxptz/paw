@@ -1,12 +1,33 @@
 /* Reset & base */
 html, body {
-  margin: 0;
-  padding: 0;
-  font-family: 'Poppins', sans-serif;
-  background: #f3e3f3;
-  min-height: 100%;
-  overflow-x: hidden; /* prevent horizontal scroll */
-  overflow-y: hidden;
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: 'Poppins', sans-serif;
+    overflow: hidden; /* hides page scroll */
+    background: #fafafa;
+}
+div[style*="display:flex; height:100vh;"] {
+    height: 100vh;
+    overflow: hidden; /* prevents scroll inside the flex container */
+}
+
+/* Scroll only chat box and sidebar sessions */
+#chat-box, #sessions-container {
+    overflow-y: auto; /* allow scroll inside these elements */
+}
+#chat-box::-webkit-scrollbar,
+#sessions-container::-webkit-scrollbar {
+    width: 6px;
+}
+#chat-box::-webkit-scrollbar-thumb,
+#sessions-container::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 4px;
+}
+#chat-box:hover::-webkit-scrollbar-thumb,
+#sessions-container:hover::-webkit-scrollbar-thumb {
+    background: #aaa;
 }
 
 /* Wrapper to allow sticky footer */
@@ -70,17 +91,30 @@ html, body {
   margin-bottom: 15px;
   color: #231f20;
   flex: 1;
-  /* hide scrollbar (Firefox/IE/Edge legacy) */
+
   scrollbar-width: none;
   -ms-overflow-style: none;
 }
-.chat-box::-webkit-scrollbar { /* hide scrollbar (WebKit) */
+.chat-box::-webkit-scrollbar {
   display: none;
 }
 
-/* Also support views that use an element id instead of class */
-#chat-box { scrollbar-width: none; -ms-overflow-style: none; }
-#chat-box::-webkit-scrollbar { display: none; }
+
+#chat-box {
+  overflow-y: auto;       
+  scrollbar-width: thin;  
+  -ms-overflow-style: none; 
+}
+#chat-box::-webkit-scrollbar {
+  width: 6px;             
+}
+#chat-box::-webkit-scrollbar-thumb {
+  background: #ccc;      
+  border-radius: 4px;
+}
+#chat-box:hover::-webkit-scrollbar-thumb {
+  background: #aaa;       
+}
 
 .message {
   margin: 5px 0;
