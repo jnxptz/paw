@@ -70,7 +70,7 @@ class LandingController extends Controller
 
             return view('landing', [
                 'page' => 'home',
-                'totalChats' => $totalChats, 
+                'totalChats' => $totalChats,
                 'totalUsers' => $totalUsers,
                 'mostAsked' => $mostAsked,
                 'topUsers' => $topUsers,
@@ -79,7 +79,6 @@ class LandingController extends Controller
             ]);
         }
 
-        
         $recentConversations = ChatLog::where('user_id', $user->id)
             ->latest()
             ->take(5)
@@ -90,6 +89,22 @@ class LandingController extends Controller
             ->orderByDesc('count')
             ->pluck('question');
 
-        return view('client.landing', compact('user', 'recentConversations', 'mostAsked'));
+        $recentSessions = \App\Models\ChatSession::where('user_id', $user->id)
+            ->with(['chatLogs' => function ($query) {
+                $query->latest()->limit(1);
+            }])
+            ->latest()
+            ->take(10)
+            ->get()
+            ->map(function ($session) {
+                $latestLog = $session->chatLogs->first();
+                $session->preview = $latestLog ? substr($latestLog->question, 0, 50) . '...' : 'No messages yet';
+                $session->last_updated = $latestLog
+                    ? $latestLog->created_at->format('M d, Y H:i')
+                    : $session->created_at->format('M d, Y H:i');
+                return $session;
+            });
+
+        return view('client.landing', compact('user', 'recentConversations', 'mostAsked', 'recentSessions'));
     }
 }

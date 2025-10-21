@@ -4,7 +4,7 @@
 
 @section('content')
 
-<div style="display:flex; height:100vh; margin:0; padding:0; background:#fafafa;">
+<div style="display:flex; height:100vh; margin:0; padding:0; background:#fafafa; overflow:hidden;">
 
     {{-- ✅ LEFT SIDEBAR --}}
     <div style="
@@ -30,11 +30,12 @@
             border-radius:8px;
             margin:0 16px 10px 16px;
             overflow-y:hidden;
+            flex-shrink:0;
         ">
             Recent Conversations
         </div>
 
-        <div id="sessions-container" style="flex:1; overflow-y:auto; padding:0 16px 16px 16px;">
+        <div id="sessions-container" style="flex:1; overflow-y:auto; padding:0 16px 16px 16px; min-height:0;">
             {{-- ✅ New Chat Button --}}
             <button id="new-chat-btn" style="
                 width:100%;
