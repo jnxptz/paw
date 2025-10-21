@@ -48,17 +48,17 @@ class LandingController extends Controller
             $totalUsers = User::count();
 
             $mostAsked = ChatLog::select(
-            DB::raw('LOWER(TRIM(question)) as normalized_question'),
+            DB::raw('LOWER(TRIM(question)) as question'),
             DB::raw('COUNT(*) as count')
                 )
                 ->whereNotNull('question')
                 ->where('question', '!=', '')
                 ->where('user_id', $user->id) // ✅ only this user’s actual questions
                 ->whereRaw('LENGTH(question) > 5') // ✅ ignore super-short or meaningless entries
-                ->groupBy('normalized_question')
+                ->groupBy('question')
                 ->orderByDesc('count')
                 ->limit(10)
-                ->pluck('normalized_question');
+                ->get();
 
 
             $topUsers = ChatLog::select('user_id', DB::raw('COUNT(*) as conversations_count'))
