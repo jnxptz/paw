@@ -22,45 +22,62 @@ class ChatbotController extends Controller
 
     public function index(Request $request)
     {
-        $userId = Auth::id();
+    $userId = Auth::id();
 
-        if ($request->has('new')) {
+    // ✅ Create new session if "new" flag exists
+    if ($request->has('new')) {
+        $currentSession = ChatSession::create([
+            'user_id' => $userId,
+            'session_name' => 'Session ' . now()->format('M d, Y H:i')
+        ]);
+    } else {
+        $currentSession = ChatSession::where('user_id', $userId)
+            ->latest('updated_at')
+            ->first();
+
+        if (!$currentSession) {
             $currentSession = ChatSession::create([
                 'user_id' => $userId,
                 'session_name' => 'Session ' . now()->format('M d, Y H:i')
             ]);
-        } else {
-            $currentSession = ChatSession::where('user_id', $userId)
-                ->latest('updated_at')
-                ->first();
-
-            if (!$currentSession) {
-                $currentSession = ChatSession::create([
-                    'user_id' => $userId,
-                    'session_name' => 'Session ' . now()->format('M d, Y H:i')
-                ]);
-            }
         }
-
-        $sessions = ChatSession::where('user_id', $userId)
-            ->with(['chatLogs' => function ($query) {
-                $query->latest()->limit(1);
-            }])
-            ->orderBy('updated_at', 'desc')
-            ->get()
-            ->map(function ($session) {
-                $latestLog = $session->chatLogs->first();
-                $session->preview = $latestLog ? substr($latestLog->question, 0, 50) . '...' : 'No messages yet';
-                $session->last_updated = $latestLog
-                    ? $latestLog->created_at->format('M d, Y H:i')
-                    : $session->created_at->format('M d, Y H:i');
-                return $session;
-            });
-
-        $conversation = $currentSession->chatLogs()->orderBy('created_at')->get();
-
-        return view('chat.index', compact('sessions', 'conversation', 'currentSession'));
     }
+
+    // ✅ Load all sessions with last message preview
+    $sessions = ChatSession::where('user_id', $userId)
+        ->with(['chatLogs' => function ($query) {
+            $query->latest()->limit(1);
+        }])
+        ->orderBy('updated_at', 'desc')
+        ->get()
+        ->map(function ($session) {
+            $latestLog = $session->chatLogs->first();
+            $session->preview = $latestLog
+                ? substr($latestLog->question, 0, 50) . '...'
+                : 'No messages yet';
+            $session->last_updated = $latestLog
+                ? $latestLog->created_at->format('M d, Y H:i')
+                : $session->created_at->format('M d, Y H:i');
+            return $session;
+        });
+
+    // ✅ Current conversation logs
+    $conversation = $currentSession->chatLogs()
+        ->orderBy('created_at')
+        ->get();
+
+    // ✅ Random prompt suggestions from chat_logs
+    $promptSuggestions = \App\Models\ChatLog::whereNotNull('question')
+        ->select('question')
+        ->distinct()
+        ->inRandomOrder()
+        ->limit(5)
+        ->pluck('question');
+
+    // ✅ Return all data to view
+    return view('chat.index', compact('sessions', 'conversation', 'currentSession', 'promptSuggestions'));
+}
+
 
     public function newSession(Request $request)
     {
@@ -154,41 +171,50 @@ class ChatbotController extends Controller
     }
 
     public function showConversation($id)
-    {
-        $userId = Auth::id();
+{
+    $userId = Auth::id();
 
-        $currentSession = ChatSession::where('id', $id)
-            ->where('user_id', $userId)
-            ->with('chatLogs')
-            ->first();
+    $currentSession = ChatSession::where('id', $id)
+        ->where('user_id', $userId)
+        ->firstOrFail();
 
-        if (!$currentSession) {
-            $newSession = ChatSession::create([
-                'user_id' => $userId,
-                'session_name' => 'Session ' . now()->format('M d, Y H:i')
-            ]);
-            return redirect()->route('chatbot.show', ['id' => $newSession->id]);
-        }
+    $sessions = ChatSession::where('user_id', $userId)
+        ->with(['chatLogs' => function ($query) {
+            $query->latest()->limit(1);
+        }])
+        ->orderBy('updated_at', 'desc')
+        ->get()
+        ->map(function ($session) {
+            $latestLog = $session->chatLogs->first();
+            $session->preview = $latestLog
+                ? substr($latestLog->question, 0, 50) . '...'
+                : 'No messages yet';
+            $session->last_updated = $latestLog
+                ? $latestLog->created_at->format('M d, Y H:i')
+                : $session->created_at->format('M d, Y H:i');
+            return $session;
+        });
 
-        $sessions = ChatSession::where('user_id', $userId)
-            ->with(['chatLogs' => function ($query) {
-                $query->latest()->limit(1);
-            }])
-            ->orderBy('updated_at', 'desc')
-            ->get()
-            ->map(function ($session) {
-                $latestLog = $session->chatLogs->first();
-                $session->preview = $latestLog ? substr($latestLog->question, 0, 50) . '...' : 'No messages yet';
-                $session->last_updated = $latestLog
-                    ? $latestLog->created_at->format('M d, Y H:i')
-                    : $session->created_at->format('M d, Y H:i');
-                return $session;
-            });
+    $conversation = $currentSession->chatLogs()
+        ->orderBy('created_at')
+        ->get();
 
-        $conversation = $currentSession->chatLogs()->orderBy('created_at')->get();
+    // ✅ add this line
+    $promptSuggestions = \App\Models\ChatLog::whereNotNull('question')
+        ->select('question')
+        ->distinct()
+        ->inRandomOrder()
+        ->limit(5)
+        ->pluck('question');
 
-        return view('chat.index', compact('sessions', 'conversation', 'currentSession'));
-    }
+    return view('chat.index', compact(
+        'sessions',
+        'conversation',
+        'currentSession',
+        'promptSuggestions'
+    ));
+}
+
 
     public function deleteSession($id)
     {

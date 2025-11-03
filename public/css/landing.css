@@ -291,7 +291,9 @@ footer {
   padding: 0 20px 40px;
 }
 
-/* FAQ Section */
+/* ============================
+   FAQ Section
+============================ */
 .faq-section {
   background: #fff;
   border: 1px solid #eee;
@@ -337,7 +339,9 @@ footer {
   color: #ff6b81;
 }
 
-/* Conversations Section */
+/* ============================
+   Recent Conversations
+============================ */
 .recent-conversations {
   background: #fff;
   border: 1px solid #eee;
@@ -410,63 +414,182 @@ footer {
   color: #6b4a6b;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
+/* ============================
+   Responsive Layouts
+============================ */
+
+/* Tablet view */
+@media (max-width: 1024px) {
+  .header {
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 30px;
+    text-align: center;
+  }
+
+  .brand-container {
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+
+  .navbar {
+    flex-direction: column;           /* stack brand and nav */
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+  }
+
+  .nav-links {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 35px;
+    padding-left: 0;
+    margin-top: 10px;                 /* below PawTulong */
+    width: 100%;                       /* fill container */
+  }
+
+  .dropdown {
+    position: static;
+    margin-top: 10px;
+  }
+
   .main-layout {
     flex-direction: column;
     align-items: center;
+    justify-content: center;
+    text-align: center;
   }
-
   .faq-section,
   .recent-conversations {
-    max-width: 100%;
+    width: 90% !important;
+    max-width: 500px !important;  /* narrowed vs original 600px */
+    margin: 20px auto !important;
+    padding: 15px 12px;          /* added padding inside */
+    box-sizing: border-box;
+    text-align: center;
+  }
+  .faq-list,
+  .conversations-grid {
+    width: 100%;
+    margin: 0 auto;
   }
 }
 
-@media (max-width: 480px) {
-  .summary-cards {
+/* Mobile view */
+@media (max-width: 768px) {
+  .header {
     flex-direction: column;
     align-items: center;
+    padding: 20px;
+    text-align: center;
   }
 
-  .summary-card {
+  .brand-container {
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+  .brand {
+    font-size: 36px;                  /* smaller brand text */
+  }
+
+  .navbar {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     width: 100%;
-    max-width: 300px;
+  }
+
+  .nav-links {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 25px;
+    padding-left: 0;
+    margin-top: 10px;                 /* below PawTulong */
+    width: 100%;
+  }
+
+  .nav-links li a {
+    font-size: 1rem;
+    font-weight: 700;
+  }
+
+  .dropdown {
+    position: static;
+    margin-top: 10px;
+  }
+
+  .dropdown-menu {
+    position: static;
+    background: none;
+    border: none;
+    box-shadow: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .dropdown-menu a {
+    border: none;
+    background: #f3e3f3;
+    border-radius: 6px;
+    padding: 8px 12px;
+  }
+
+   .faq-section,
+  .recent-conversations {
+    flex: none !important;
+    width: 95% !important;
+    max-width: 500px !important;
+    margin: 15px auto !important;
+    text-align: center;
+  }
+
+  .faq-list,
+  .conversations-grid {
+    width: 100%;
+    margin: 0 auto;
   }
 }
 
+/* iPhone 12/13/14 Pro */
+@media (max-width: 420px) {
+  .main-layout {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;
+    min-height: 100vh;
+    padding: 20px 10px 60px;
+    gap: 14px;
+    text-align: center;
+  }
 
+    .faq-section,
+  .recent-conversations {
+    width: 100%;
+    max-width: 370px;
+    margin: 10px auto;
+    padding: 15px;
+    box-sizing: border-box;
+    border-radius: 18px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+    text-align: center;
+  }
 
-.faq-section {
-  max-width: 700px;
-  margin: 0 auto;
-}
-
-.faq-list {
-  list-style: none;
-  padding: 0;
-}
-
-.faq-item {
-  background: #fff;
-  border-radius: 10px;
-  margin-bottom: 10px;
-  padding: 12px 15px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-  cursor: pointer;
-}
-
-.faq-question {
-  font-weight: 600;
-  color: #4b2c4b;
-}
-
-.faq-answer {
-  margin-top: 8px;
-  color: #333;
-  line-height: 1.4;
-  background: #f9f5fa;
-  border-left: 4px solid #d2a8d2;
-  padding: 10px;
-  border-radius: 6px;
+  .faq-list,
+  .conversations-grid {
+    width: 100%;
+    margin: 0 auto;
+  }
 }

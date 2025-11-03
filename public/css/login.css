@@ -220,3 +220,134 @@ footer {
 .footer-content a:hover {
   color: #a11d7c;
 }
+/* 🟣 Forgot Password Modal */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 9999;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  justify-content: center;
+  align-items: center;
+}
+
+.modal.show {
+  display: flex !important;
+}
+
+.modal-content {
+  background: #f7e4f2;
+  border-radius: 20px;
+  padding: 30px 25px 25px;
+  width: 90%;
+  max-width: 420px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+  position: relative;
+  animation: fadeIn 0.3s ease;
+  text-align: center;
+  font-family: 'Poppins', sans-serif;
+}
+
+.modal-content h5 {
+  color: #a11d7c;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.modal-content label {
+  display: block;
+  color: #8a3d70;
+  font-size: 0.9rem;
+  margin-bottom: 6px;
+  font-weight: 600;
+  text-align: left;
+}
+
+.modal-content input {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #e0b8d8;
+  font-size: 1rem;
+  margin-bottom: 14px;
+  outline: none;
+  background: #fff;
+}
+
+.modal-content input:focus {
+  border-color: #a11d7c;
+  box-shadow: 0 0 6px rgba(161,29,124,0.25);
+}
+
+/* Buttons container */
+.modal-content .modal-buttons {
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+  margin-top: 18px;
+}
+
+/* Main action buttons (Reset / Save / etc.) */
+.modal-content .btn-primary,
+.add-btn {
+  flex: 1;
+  background: #a11d7c;
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 700;
+  padding: 10px 0;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.2s;
+}
+
+.modal-content .btn-primary:hover,
+.add-btn:hover {
+  background: #8a1562;
+  transform: translateY(-2px);
+}
+
+/* Secondary / Cancel button */
+.modal-content .btn-secondary {
+  flex: 1;
+  background: #e6b6d6;
+  color: #231f20;
+  border: none;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 700;
+  padding: 10px 0;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.2s;
+}
+
+.modal-content .btn-secondary:hover {
+  background: #d79ac8;
+  transform: translateY(-2px);
+}
+
+.modal-content .btn-close {
+  position: absolute;
+  top: 12px;
+  left: 12px;   /* Moved to the left side */
+  font-size: 1.2rem;
+  color: #8a3d70;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.modal-content .btn-close:hover {
+  color: #a11d7c;
+}
+
+/* Fade-in animation */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}

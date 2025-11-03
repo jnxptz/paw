@@ -7,7 +7,7 @@ html, body {
   height: 100%;
   font-family: 'Poppins', sans-serif;
   background: #fafafa;
-  overflow: hidden; /* prevent page scroll */
+  overflow: hidden; /* prevent full-page scroll */
 }
 
 /* ============================
@@ -16,34 +16,31 @@ html, body {
 #chat-box, 
 #sessions-container {
   overflow-y: auto;
-  scrollbar-width: thin; /* Firefox */
-  scrollbar-color: #d2a8d2 #f3e3f3; /* thumb + track */
+  scrollbar-width: thin;
+  scrollbar-color: #d2a8d2 #f3e3f3;
 }
 
-/* --- WebKit Scrollbar --- */
+/* WebKit Scrollbar */
 #chat-box::-webkit-scrollbar,
 #sessions-container::-webkit-scrollbar {
   width: 8px;
 }
-
 #chat-box::-webkit-scrollbar-track,
 #sessions-container::-webkit-scrollbar-track {
   background: #f3e3f3;
   border-radius: 10px;
 }
-
 #chat-box::-webkit-scrollbar-thumb,
 #sessions-container::-webkit-scrollbar-thumb {
   background-color: #d2a8d2;
   border-radius: 10px;
 }
-
 #chat-box:hover::-webkit-scrollbar-thumb,
 #sessions-container:hover::-webkit-scrollbar-thumb {
   background-color: #c78db4;
 }
 
-/* Hide scrollbar from rest of the page */
+/* Hide scrollbar from full page */
 html::-webkit-scrollbar, 
 body::-webkit-scrollbar {
   display: none;
@@ -54,13 +51,63 @@ body::-webkit-scrollbar {
 ============================ */
 .main-bg {
   display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-}
-
-div[style*="display:flex; height:100vh;"] {
+  flex-direction: row;
   height: 100vh;
   overflow: hidden;
+}
+
+/* Sidebar and Chat containers */
+#sessions-container {
+  width: 26%;
+  min-width: 250px;
+  background: #fff;
+  border-right: 1px solid #eee;
+  overflow-y: auto;
+  transition: all 0.3s ease;
+}
+
+#chat-box-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: #fafafa;
+  transition: all 0.3s ease; /* Added for smooth expansion */
+}
+
+/* ============================
+   🟣 SIDEBAR TOGGLE (Recent Convos)
+============================ */
+
+/* Toggle button */
+#toggle-sidebar {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  background: #6b4a6b;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 12px;
+  cursor: pointer;
+  z-index: 2000;
+  transition: all 0.3s ease;
+}
+
+#toggle-sidebar:hover {
+  background: #8a5a8a;
+}
+
+/* Hidden sidebar - Desktop/Tablet */
+#sessions-container.hidden {
+  margin-left: -260px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Smooth chat resize when sidebar hidden */
+.sidebar-hidden #chat-box-container {
+  width: 100%;
 }
 
 /* ============================
@@ -72,13 +119,16 @@ div[style*="display:flex; height:100vh;"] {
   padding: 18px 40px;
   display: flex;
   align-items: center;
+  justify-content: center;
   border-radius: 0 0 40px 40px;
+  flex-wrap: wrap;
+  text-align: center;
 }
 
 .logo {
   width: 60px;
   height: 60px;
-  margin-right: 18px;
+  margin-right: 14px;
 }
 
 .brand {
@@ -96,7 +146,8 @@ div[style*="display:flex; height:100vh;"] {
   justify-content: center;
   align-items: center;
   padding: 20px;
-  padding-bottom: 100px;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 /* ============================
@@ -104,25 +155,24 @@ div[style*="display:flex; height:100vh;"] {
 ============================ */
 .login-box.chat {
   background: #fff;
-  border-radius: 28px;
+  border-radius: 20px;
   box-shadow: 8px 10px 10px #b3a3b3;
   padding: 20px;
-  width: 100%;
-  max-width: 600px;
   display: flex;
   flex-direction: column;
+  height: calc(100vh - 180px);
+  box-sizing: border-box;
+  margin: 10px;
 }
 
 /* CHAT CONTENT */
 .chat-box {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
   background: #f9f9f9;
   border-radius: 12px;
-  padding: 16px;
-  height: 500px; /* fixed height */
-  overflow-y: auto;
-  margin-bottom: 15px;
   color: #231f20;
-  flex: 1;
 }
 
 /* ============================
@@ -175,6 +225,87 @@ div[style*="display:flex; height:100vh;"] {
   background: #d49dc4;
 }
 
+.prompt-bubble {
+  position: fixed;
+  bottom: 90px;
+  right: 25px;
+  background: #e6b6d6;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 5px 12px rgba(0,0,0,0.2);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 1500;
+}
+
+.prompt-bubble:hover {
+  background: #d49dc4;
+  transform: scale(1.05);
+}
+
+/* The container that pops up */
+.prompt-popup {
+  position: fixed;
+  bottom: 160px;
+  right: 25px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+  padding: 12px 16px;
+  width: 260px;
+  max-height: 250px;
+  overflow-y: auto;
+  display: none;
+  flex-direction: column;
+  z-index: 1400;
+  animation: fadeInUp 0.3s ease forwards;
+}
+
+/* Show popup when active */
+.prompt-popup.active {
+  display: flex;
+}
+
+/* Scrollbar inside popup */
+.prompt-popup::-webkit-scrollbar {
+  width: 6px;
+}
+.prompt-popup::-webkit-scrollbar-thumb {
+  background: #e6b6d6;
+  border-radius: 10px;
+}
+
+/* Prompt item */
+.prompt-popup .prompt-item {
+  background: #f7f0f7;
+  border-radius: 10px;
+  padding: 10px;
+  margin: 5px 0;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.prompt-popup .prompt-item:hover {
+  background: #f0d6ef;
+  transform: scale(1.02);
+}
+
+/* Animation */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 /* ============================
    FOOTER
 ============================ */
@@ -202,4 +333,148 @@ footer a {
 
 footer a:hover {
   color: #a11d7c;
+}/* ============================
+   RESPONSIVE DESIGN
+============================ */
+
+/* Tablet (≤1024px) */
+@media (max-width: 1024px) {
+  .header {
+    flex-direction: column;
+    padding: 16px;
+  }
+
+  .brand {
+    font-size: 28px;
+  }
+
+  #sessions-container {
+    width: 30%; /* Keep sidebar visible but narrower */
+    min-width: 220px;
+  }
+
+  .login-box.chat {
+    max-width: 90%;
+    height: 80vh;
+    margin: 0 10px; /* Add side margin for breathing room on tablet */
+    padding-left: 20px; /* Add left padding inside chat box */
+    padding-right: 20px;
+  }
+  
+  .prompt-bubble {
+    bottom: 100px;
+    right: 20px;
+    width: 55px;
+    height: 55px;
+  }
+  .prompt-popup {
+    width: 240px;
+    right: 20px;
+    bottom: 170px;
+  }
+}
+
+/* Mobile (≤768px) */
+@media (max-width: 768px) {
+  html, body {
+    overflow: hidden;
+  }
+
+  .main-bg {
+    flex-direction: column;
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 16px 10px;
+  }
+
+  .brand {
+    font-size: 24px;
+  }
+
+  /* Sidebar expands full width at top, can be toggled hidden */
+  #sessions-container {
+    width: 100%;
+    min-width: unset;
+    max-height: 160px; /* a bit taller for better visibility */
+    border-right: none;
+    border-bottom: 1px solid #eee;
+    padding: 10px 15px; /* increased padding */
+    flex-shrink: 0;
+  }
+
+  /* Hidden sidebar on mobile is display none */
+  #sessions-container.hidden {
+    display: none;
+  }
+
+  #chat-box-container {
+    flex: 1;
+    height: auto;
+    min-height: calc(100vh - 230px); /* header + sidebar + footer accounted */
+    margin: 0 10px; /* Add horizontal margin outside chat container */
+  }
+
+  .sidebar-hidden #chat-box-container {
+    height: calc(100vh - 140px); /* expand more if sidebar hidden */
+    margin: 0 15px; /* slightly more margin */
+  }
+
+  .login-box.chat {
+    max-width: 100%;
+    height: auto;
+    flex: 1;
+    margin: 10px auto;
+    padding: 14px 20px; /* Added horizontal padding inside chat */
+    min-height: calc(100vh - 270px);
+    box-sizing: border-box;
+  }
+
+  .chat-box {
+    padding: 12px 20px; /* Added left & right padding for messages */
+    flex: 1;
+  }
+
+  .chat-input {
+    flex-direction: column;
+  }
+
+  .chat-input input,
+  .chat-input button {
+    width: 100%;
+  }
+
+  /* Toggle button larger for touch */
+  #toggle-sidebar {
+    top: 10px;
+    left: 10px;
+    padding: 10px 14px;
+    font-size: 14px;
+  }
+
+  /* Prompt bubble and popup positions */
+  .prompt-bubble {
+    bottom: 130px;
+    right: 15px;
+    width: 55px;
+    height: 55px;
+  }
+
+  .prompt-popup {
+    bottom: 190px;
+    right: 10px;
+    max-width: 90%;
+    width: auto;
+    left: 5%;
+  }
+}
+
+@media (max-width: 480px) {
+  .main-bg {
+    padding-left: 25px;
+    padding-right: 25px;
+  }
 }

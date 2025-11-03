@@ -22,6 +22,8 @@ Route::prefix('admin')->group(function () {
 Route::get('/login', [LoginController::class, 'show'])->name('login.form');
 Route::post('/login', [LoginController::class, 'login'])->name('login');
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+Route::post('/reset-password', [LoginController::class, 'resetPassword'])->name('reset.password');
+
 
 // --- Authenticated Users (Products + Chatbot) ---
 Route::middleware('auth')->group(function () {
